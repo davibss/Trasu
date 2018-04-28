@@ -311,21 +311,24 @@ public class TarefaFragment extends Fragment implements
             final int deletedIndex = viewHolder.getAdapterPosition();
 
             // remove the item from recycler view
+            databaseReference.child("tarefa_individual").
+                    child(cartList.get(viewHolder.getAdapterPosition()).getTar_id())
+                    .removeValue();
             mAdapter.removeItem(viewHolder.getAdapterPosition());
 
             // showing snack bar with Undo option
-            Snackbar snackbar = Snackbar
+            /*Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, name + " removed from cart!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     // undo is selected, restore the deleted item
                     mAdapter.restoreItem(deletedItem, deletedIndex);
+
                 }
             });
             snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
+            snackbar.show();*/
         }
     }
 

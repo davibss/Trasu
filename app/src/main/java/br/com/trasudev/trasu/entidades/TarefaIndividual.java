@@ -42,6 +42,8 @@ public class TarefaIndividual {
 
     }
 
+
+
     public static String somarData (int dias,Date data) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);
