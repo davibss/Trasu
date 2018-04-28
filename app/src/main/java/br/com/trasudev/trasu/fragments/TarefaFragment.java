@@ -3,10 +3,18 @@ package br.com.trasudev.trasu.fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +41,9 @@ import java.util.List;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
+import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.classes.TarefaAdapter;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 
@@ -47,7 +57,8 @@ import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
  * Use the {@link TarefaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TarefaFragment extends Fragment {
+public class TarefaFragment extends Fragment implements
+        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener{
     private FirebaseUser firebaseUser;
     private ProgressDialog progressDialog;
     //private FloatingActionButton floatingActionButton;
@@ -61,6 +72,11 @@ public class TarefaFragment extends Fragment {
     TarefaIndividual tarefaSelecionada;
     private ListView listView;
     private FloatingActionButton floatingActionButton;
+
+    private RecyclerView recyclerView;
+    private List<TarefaIndividual> cartList;
+    private CartListAdapter mAdapter;
+    private CoordinatorLayout coordinatorLayout;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -234,8 +250,83 @@ public class TarefaFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_home, container,false);
         inicializarComponentes(rootView);
         onClickEvent();
-        eventoDatabase();
+        recyclerViewEvent(rootView);
+        //eventoDatabase();
         return rootView;
+    }
+
+    private void recyclerViewEvent(View rootView) {
+        recyclerView = rootView.findViewById(R.id.recycler_view);
+        coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
+        cartList = new ArrayList<>();
+        mAdapter = new CartListAdapter(getActivity(), cartList);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(mAdapter);
+
+        // adding item touch helper
+        // only ItemTouchHelper.LEFT added to detect Right to Left swipe
+        // if you want both Right -> Left and Left -> Right
+        // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new
+                RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
+                this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+        eventoDatabaseCard();
+    }
+
+    private void eventoDatabaseCard() {
+        databaseReference.child("tarefa_individual").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //listTarefa.clear();
+                cartList.clear();
+                for (DataSnapshot obj: dataSnapshot.getChildren()){
+                    TarefaIndividual p = obj.getValue(TarefaIndividual.class);
+                    if (p.getTar_id_usuario().equals(firebaseUser.getUid())){
+                        //listTarefa.add(p);
+                        cartList.add(p);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof CartListAdapter.MyViewHolder) {
+            // get the removed item name to display it in snack bar
+            String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
+
+            // backup of removed item for undo purpose
+            final TarefaIndividual deletedItem = cartList.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, name + " removed from cart!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // undo is selected, restore the deleted item
+                    mAdapter.restoreItem(deletedItem, deletedIndex);
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
