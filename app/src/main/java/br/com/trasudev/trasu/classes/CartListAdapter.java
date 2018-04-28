@@ -2,6 +2,10 @@ package br.com.trasudev.trasu.classes;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -60,10 +64,24 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final TarefaIndividual item = cartList.get(position);
-        Resources res = Resources.getSystem();
-        holder.name.setText(res.getString(R.string.placeNome,item.getTar_nome()));
-        holder.prioridade.setText(res.getString(R.string.placePrioridade,item.getTar_prioridade()));
+        holder.name.setText(String.valueOf("Nome: " + item.getTar_nome()));
+        holder.prioridade.setText(String.valueOf("Prioridade: " + item.getTar_prioridade()));
         holder.prazo.setText(subtrairDatas(item));
+        Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
+        if (Integer.parseInt(subtrairDatas(item)) == 0){
+            //holder.thumbnail.setColorFilter(Color.parseColor("#F44336"));
+            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffF44336, PorterDuff.Mode.MULTIPLY));
+        }else if (Integer.parseInt(subtrairDatas(item)) == 1){
+            //holder.thumbnail.setColorFilter(Color.parseColor("#FF9800"));
+            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFF9800, PorterDuff.Mode.MULTIPLY));
+        }else if (Integer.parseInt(subtrairDatas(item)) == 2){
+            //holder.thumbnail.setColorFilter(Color.parseColor("#FFEB3B"));
+            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFFEB3B, PorterDuff.Mode.MULTIPLY));
+        }else if (Integer.parseInt(subtrairDatas(item)) > 2){
+            //holder.thumbnail.setColorFilter(Color.parseColor("#4CAF50"));
+            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFFEB3B, PorterDuff.Mode.MULTIPLY));
+        }
+        holder.thumbnail.setImageDrawable(mDrawable);
         /*Glide.with(context)
                 .load(R.drawable.ic_group_black_24dp)
                 .into(holder.thumbnail);*/

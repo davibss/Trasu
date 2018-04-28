@@ -82,8 +82,6 @@
     <string name="prioridade_tarefa">Prioridade:</string>
     <string name="prazo_tarefa">XX</string>
     <string name="dias_tarefa">Dias restantes</string>
-    <string name="placeNome">Nome: %1$s</string>
-    <string name="placePrioridade">Prioridade: %1$s</string>
     <!--endregion-->
 
     <string name="delete">DELETE</string>
