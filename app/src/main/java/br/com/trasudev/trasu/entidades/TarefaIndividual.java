@@ -52,12 +52,12 @@ public class TarefaIndividual {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);
         calendar.add(Calendar.DATE, dias);
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH");
         return format.format(calendar.getTime());
     }
 
     public static String dataTransformer(Date data){
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH");
         return format.format(data.getTime());
     }
 

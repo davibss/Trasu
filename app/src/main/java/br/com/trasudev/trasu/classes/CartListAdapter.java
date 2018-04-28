@@ -18,6 +18,7 @@ import android.widget.TextView;
 import br.com.trasudev.trasu.R;
 import com.bumptech.glide.Glide;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,7 +33,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     private List<TarefaIndividual> cartList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, prioridade, prazo;
+        public TextView name, prioridade, prazo, dias;
         public ImageView thumbnail;
         public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
@@ -42,6 +43,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             name = view.findViewById(R.id.nome_tarefa);
             prioridade = view.findViewById(R.id.prioridade_tarefa);
             prazo = view.findViewById(R.id.prazo_tarefa);
+            dias = view.findViewById(R.id.dias_rest);
             thumbnail = view.findViewById(R.id.img_tarefa);
             viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
@@ -71,26 +73,34 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     }
 
     private void prazoEvent(MyViewHolder holder, TarefaIndividual item) {
-        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date data = new Date();
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        Calendar dataAtual = Calendar.getInstance();
+        Calendar dataFinal = Calendar.getInstance();
         try {
-            data = formato.parse(item.getTar_dataFinal());
+            String data = formato.format(new Date());
+            dataAtual.setTime(formato.parse(data));
+            dataFinal.setTime(formato.parse(item.getTar_dataFinal()));
+            Log.d("DATAS","ATUAL:"+dataAtual.getTime()+"FINAL:"+dataFinal.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (data.after(new Date())){
-            holder.prazo.setText(subtrairDatas(item));
-            if (Integer.parseInt(subtrairDatas(item)) == 0){
-                holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
-            }else if (Integer.parseInt(subtrairDatas(item)) == 1){
+        if (dataAtual.before(dataFinal)){
+            if (Integer.parseInt(subtrairDatas(item)) == 1){
+                holder.dias.setText("Dia restante");
                 holder.thumbnail.setImageResource(R.drawable.ic_error_outline_orange_96dp);
             }else if (Integer.parseInt(subtrairDatas(item)) == 2){
                 holder.thumbnail.setImageResource(R.drawable.ic_error_outline_yellow_96dp);
             }else if (Integer.parseInt(subtrairDatas(item)) > 2){
                 holder.thumbnail.setImageResource(R.drawable.ic_error_outline_green_96dp);
             }
-        }else {
+            holder.prazo.setText(subtrairDatas(item));
+        }else if (dataAtual.after(dataFinal)){
+            holder.dias.setText("Expirado");
             holder.thumbnail.setImageResource(R.drawable.ic_cancel_black_24dp);
+            holder.prazo.setText("0");
+        }else if (dataAtual.equals(dataFinal)){
+            holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
+            holder.prazo.setText("0");
         }
 
     }
@@ -116,7 +126,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
 
     private String subtrairDatas(TarefaIndividual tarefa) {
         Calendar a = Calendar.getInstance();
-        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
         Date data = new Date();
         try {
             data = formato.parse(tarefa.getTar_dataFinal());
@@ -127,6 +137,17 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         Calendar b = Calendar.getInstance();
         b.setTime(new Date());// data menor
         a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
+
+        /*String retorno = null;
+
+
+        if (b.getTime().before(a.getTime())){
+            retorno = ;
+        }else if (b.after(a)){
+            retorno = "Expirado";
+        }else if (b.equals(a)){
+            retorno = "0";
+        }*/
         return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
     }
 }

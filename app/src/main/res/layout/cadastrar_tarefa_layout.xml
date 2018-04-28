@@ -48,7 +48,6 @@
                 <RadioButton
                     android:id="@+id/radioBaixa"
                     android:text="@string/baixa"
-                    android:checked="true"
                     android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
