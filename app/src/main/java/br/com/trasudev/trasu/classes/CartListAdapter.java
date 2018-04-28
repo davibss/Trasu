@@ -8,6 +8,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,25 +67,32 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         final TarefaIndividual item = cartList.get(position);
         holder.name.setText(String.valueOf("Nome: " + item.getTar_nome()));
         holder.prioridade.setText(String.valueOf("Prioridade: " + item.getTar_prioridade()));
-        holder.prazo.setText(subtrairDatas(item));
-        Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_error_outline_black_24dp);
-        if (Integer.parseInt(subtrairDatas(item)) == 0){
-            //holder.thumbnail.setColorFilter(Color.parseColor("#F44336"));
-            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffF44336, PorterDuff.Mode.MULTIPLY));
-        }else if (Integer.parseInt(subtrairDatas(item)) == 1){
-            //holder.thumbnail.setColorFilter(Color.parseColor("#FF9800"));
-            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFF9800, PorterDuff.Mode.MULTIPLY));
-        }else if (Integer.parseInt(subtrairDatas(item)) == 2){
-            //holder.thumbnail.setColorFilter(Color.parseColor("#FFEB3B"));
-            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFFEB3B, PorterDuff.Mode.MULTIPLY));
-        }else if (Integer.parseInt(subtrairDatas(item)) > 2){
-            //holder.thumbnail.setColorFilter(Color.parseColor("#4CAF50"));
-            mDrawable.setColorFilter(new PorterDuffColorFilter(0xffFFEB3B, PorterDuff.Mode.MULTIPLY));
+        prazoEvent(holder, item);
+    }
+
+    private void prazoEvent(MyViewHolder holder, TarefaIndividual item) {
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date data = new Date();
+        try {
+            data = formato.parse(item.getTar_dataFinal());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        holder.thumbnail.setImageDrawable(mDrawable);
-        /*Glide.with(context)
-                .load(R.drawable.ic_group_black_24dp)
-                .into(holder.thumbnail);*/
+        if (data.after(new Date())){
+            holder.prazo.setText(subtrairDatas(item));
+            if (Integer.parseInt(subtrairDatas(item)) == 0){
+                holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
+            }else if (Integer.parseInt(subtrairDatas(item)) == 1){
+                holder.thumbnail.setImageResource(R.drawable.ic_error_outline_orange_96dp);
+            }else if (Integer.parseInt(subtrairDatas(item)) == 2){
+                holder.thumbnail.setImageResource(R.drawable.ic_error_outline_yellow_96dp);
+            }else if (Integer.parseInt(subtrairDatas(item)) > 2){
+                holder.thumbnail.setImageResource(R.drawable.ic_error_outline_green_96dp);
+            }
+        }else {
+            holder.thumbnail.setImageResource(R.drawable.ic_cancel_black_24dp);
+        }
+
     }
 
     @Override
