@@ -42,7 +42,11 @@ public class TarefaIndividual {
 
     }
 
-
+    public void excluir(DatabaseReference databaseReference, TarefaIndividual tarefa){
+        databaseReference.child("tarefa_individual").
+                child(tarefa.getTar_id())
+                .removeValue();
+    }
 
     public static String somarData (int dias,Date data) {
         Calendar calendar = Calendar.getInstance();

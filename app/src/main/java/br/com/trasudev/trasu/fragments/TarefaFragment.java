@@ -267,10 +267,6 @@ public class TarefaFragment extends Fragment implements
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
 
-        // adding item touch helper
-        // only ItemTouchHelper.LEFT added to detect Right to Left swipe
-        // if you want both Right -> Left and Left -> Right
-        // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new
                 RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
                 this);
@@ -311,24 +307,8 @@ public class TarefaFragment extends Fragment implements
             final int deletedIndex = viewHolder.getAdapterPosition();
 
             // remove the item from recycler view
-            databaseReference.child("tarefa_individual").
-                    child(cartList.get(viewHolder.getAdapterPosition()).getTar_id())
-                    .removeValue();
+            new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()));
             mAdapter.removeItem(viewHolder.getAdapterPosition());
-
-            // showing snack bar with Undo option
-            /*Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, name + " removed from cart!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // undo is selected, restore the deleted item
-                    mAdapter.restoreItem(deletedItem, deletedIndex);
-
-                }
-            });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();*/
         }
     }
 
