@@ -70,7 +70,7 @@ public class TarefaFragment extends Fragment implements
     private List<TarefaIndividual> listTarefa = new ArrayList<TarefaIndividual>();
     //private ArrayAdapter<TarefaIndividual> arrayAdapterTarefa;
     TarefaIndividual tarefaSelecionada;
-    private ListView listView;
+    //private ListView listView;
     private FloatingActionButton floatingActionButton;
 
     private RecyclerView recyclerView;
@@ -162,7 +162,7 @@ public class TarefaFragment extends Fragment implements
                 /*arrayAdapterTarefa = new ArrayAdapter<TarefaIndividual>(getActivity(),
                         android.R.layout.simple_list_item_1,listTarefa);*/
                 //listView.setAdapter(arrayAdapterTarefa);
-                listView.setAdapter(new TarefaAdapter(getActivity(),listTarefa));
+                //listView.setAdapter(new TarefaAdapter(getActivity(),listTarefa));
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -189,7 +189,7 @@ public class TarefaFragment extends Fragment implements
 
     private void inicializarComponentes(View rootView){
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
-        listView = (ListView) rootView.findViewById(R.id.listView);
+        //listView = (ListView) rootView.findViewById(R.id.listView);
     }
 
     private void inicializarComponentesTarefa(View alertLayout) {
@@ -233,14 +233,14 @@ public class TarefaFragment extends Fragment implements
                 inicializarComponentesTarefa(alertLayout);
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 tarefaSelecionada = (TarefaIndividual) adapterView.getItemAtPosition(i);
                 alert("Nome: "+tarefaSelecionada.getTar_nome()+"\nDescrição: "+
                         tarefaSelecionada.getTar_descricao());
             }
-        });
+        });*/
     }
 
     @Override
