@@ -1,6 +1,7 @@
 package br.com.trasudev.trasu.classes;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.lang.String;
 
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 
@@ -58,12 +60,13 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final TarefaIndividual item = cartList.get(position);
-        holder.name.setText(item.getTar_nome());
-        holder.prioridade.setText(item.getTar_descricao());
+        Resources res = Resources.getSystem();
+        holder.name.setText(res.getString(R.string.placeNome,item.getTar_nome()));
+        holder.prioridade.setText(res.getString(R.string.placePrioridade,item.getTar_prioridade()));
         holder.prazo.setText(subtrairDatas(item));
-        Glide.with(context)
+        /*Glide.with(context)
                 .load(R.drawable.ic_group_black_24dp)
-                .into(holder.thumbnail);
+                .into(holder.thumbnail);*/
     }
 
     @Override
