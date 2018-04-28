@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "191201327062",
+    "firebase_url": "https://trasu-e2eb9.firebaseio.com",
+    "project_id": "trasu-e2eb9",
+    "storage_bucket": "trasu-e2eb9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191201327062:android:8631d429394b5e8d",
+        "android_client_info": {
+          "package_name": "br.com.trasudev.trasu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191201327062-uhh2u7r61itf7rvvumsbt0lperllsmot.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.trasudev.trasu",
+            "certificate_hash": "1c5a68af631e42922284c1a67ec007188264ed23"
+          }
+        },
+        {
+          "client_id": "191201327062-9u8jcu3uhkf7p7ajpvg8evulrke3rs0o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtpiLn73wOsMzXp1iM0f-NJ-f0BylMGag"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191201327062-9u8jcu3uhkf7p7ajpvg8evulrke3rs0o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

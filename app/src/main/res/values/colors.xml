@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#0D47A1</color>
+    <color name="colorAccent">#00B0FF</color>
+    <color name="backgroundConstraint">#fafafa</color>
+    <color name="fontColor">#212121</color>
+    <color name="backgroundButton">#536DFE</color>
+    <color name="colorText">#FAFAFA</color>
+
+    <!--region Color recyler view-->
+    <color name="bg_row_background">#fa315b</color>
+    <color name="item_name">#535353</color>
+    <color name="description">#a9a9a9</color>
+    <!--endregion-->
+</resources>

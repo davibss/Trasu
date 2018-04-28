@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <dimen name="editText_dimen_width">250dp</dimen>
+    <dimen name="img_trasu">300dp</dimen>
+    <dimen name="img_user_cadastro">300dp</dimen>
+    <dimen name="padding_button">10dp</dimen>
+    <dimen name="editTextDDD_width">50dp</dimen>
+    <dimen name="editTextTel_width">190dp</dimen>
+    <dimen name="floatingButton">60dp</dimen>
+    <dimen name="editText_cadastrar_tarefa">200dp</dimen>
+
+    <!--region Dimensões do recycler view-->
+    <dimen name="activity_padding_horizontal">16dp</dimen>
+    <dimen name="padd_10">10dp</dimen>
+    <dimen name="ic_delete">30dp</dimen>
+    <dimen name="thumbnail">90dp</dimen>
+    <!--endregion-->
+</resources>

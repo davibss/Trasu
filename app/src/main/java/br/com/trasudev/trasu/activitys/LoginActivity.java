@@ -1,0 +1,153 @@
+package br.com.trasudev.trasu.activitys;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import br.com.trasudev.trasu.R;
+import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.Usuario;
+
+public class LoginActivity extends AppCompatActivity {
+    private EditText editEmail, editSenha;
+    private TextView txvCadastro;
+    private Button btnLogin;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    public static boolean calledAlready = false;
+    private ProgressDialog progressDialog;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    private void verificarUser() {
+        if (firebaseUser == null){
+            //
+        }else{
+            Intent intent = new Intent();
+            Bundle args = getIntent().getExtras();
+            if (args != null) {
+                new Usuario().cadastrar(databaseReference,firebaseUser.getUid(),args.getString("nome"),
+                        args.getString("senha"),args.getString("email"),args.getString("telefone"));
+            }
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        firebaseAuth = Conexao.getFirebaseAuth();
+        firebaseUser = Conexao.getFirebaseUser();
+        initFirebase();
+        verificarUser();
+        initComponents();
+        onClickButton();
+
+    }
+
+    private void initComponents() {
+        editEmail = (EditText) findViewById(R.id.editText_email);
+        editSenha = (EditText) findViewById(R.id.editText_senha);
+        txvCadastro = (TextView) findViewById(R.id.txv_cadastro);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+    }
+
+    private void onClickButton() {
+        txvCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getBaseContext(), CadastrarActivity.class));
+                finish();
+            }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editEmail.getText().toString().equals("") ||  editSenha.getText().toString().equals("")){
+                    alert("Preencha o(s) campo(s) vazio(s)");
+                }else {
+                    progressDialog = new ProgressDialog(LoginActivity.this);
+                    progressDialog.setMessage("Logando...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    btnLogin.setEnabled(false);
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            String email = editEmail.getText().toString().trim();
+                            String senha = editSenha.getText().toString().trim();
+                            login(email,senha);
+                        }
+                    }.start();
+                }
+            }
+        });
+    }
+
+    private void login(final String email,final String senha) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                firebaseAuth.signInWithEmailAndPassword(email,senha).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                            btnLogin.setEnabled(true);
+                            startActivity(intent);
+                        }else {
+                            btnLogin.setEnabled(true);
+                            progressDialog.dismiss();
+                            alert("E-mail ou senha errados");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
+    }
+
+    private void alert(String msg) {
+        Toast.makeText(getBaseContext(),msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initFirebase() {
+        FirebaseApp.initializeApp(LoginActivity.this);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (!calledAlready) {
+            firebaseDatabase.setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+        databaseReference = firebaseDatabase.getReference();
+    }
+}

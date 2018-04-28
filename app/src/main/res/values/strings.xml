@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <!--region Aplicativo-->
+    <string name="app_name">Trasu</string>
+    <!--endregion-->
+    <!--region LoginActivity.java-->
+    <string name="emailText">E-mail</string>
+    <string name="senhaText">Senha</string>
+    <string name="loginText">Entrar</string>
+    <string name="cadastroText">Não possui uma conta? Clique aqui!</string>
+    <!--endregion-->
+    <!--region CadastrarActivity.java-->
+    <string name="nomeUserText">Nome do usuário</string>
+    <string name="telUserText">Telefone do usuário</string>
+    <string name="emailUserText">E-mail do usuário</string>
+    <string name="senhaUserText">Senha do usuário</string>
+    <string name="confSenha">Confirme a senha</string>
+    <string name="cadastrarText">Cadastrar</string>
+    <string name="dddText">DDD</string>
+    <!--endregion-->
+    <!--region MainActivity.java-->
+    <string name="tarefasText">Minhas tarefas</string>
+    <!--endregion-->
+    <!--region Menu.xml-->
+    <string name="alterar">Alterar</string>
+    <string name="logout">Sair</string>
+    <!--endregion-->
+    <!--region CadastrarTarefaLayout-->
+    <string name="tarNomeText">Nome da tarefa</string>
+    <string name="tarDescText">Descrição da tarefa</string>
+    <string name="tarPrioridadeText">Prioridade</string>
+    <string name="alta">Alta</string>
+    <string name="media">Média</string>
+    <string name="baixa">Baixa</string>
+    <string name="tarPrazoText">Prazo</string>
+    <string name="checkboxText">Deseja ativar notificação?</string>
+    <string name="cadastrarTarText">Cadastrar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--endregion-->
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
+
+    <!-- Navigation Drawer menu labels -->
+    <string name="nav_home">Tarefas</string>
+    <string name="nav_photos">Grupos</string>
+    <string name="nav_movies">Contatos</string>
+    <string name="nav_notifications">Perfil</string>
+    <string name="nav_settings">Configurações</string>
+    <string name="nav_about_us">Sobre</string>
+    <string name="other">Outros</string>
+
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>Tarefas</item>
+        <item>Grupos</item>
+        <item>Contatos</item>
+        <item>Perfil</item>
+        <item>Configurações</item>
+    </string-array>
+
+    <string name="activity_title_about_us">Sobre</string>
+    <string name="activity_title_privacy_policy">Ajuda</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_logout">Sair</string>
+    <string name="action_mark_all_read">Mark All as Read</string>
+    <string name="privacy_policy">Ajuda</string>
+
+    <!--region Textos vazios-->
+    <string name="mygroup">Meus grupos</string>
+    <string name="contacts">Meus contatos</string>
+    <string name="profile">Meu Perfil</string>
+    <string name="settings">Minhas Configurações</string>
+    <!--endregion-->
+
+    <!--region Tarefa itens-->
+    <string name="nome_tarefa">Nome:</string>
+    <string name="prioridade_tarefa">Prioridade:</string>
+    <string name="prazo_tarefa">XX</string>
+    <string name="dias_tarefa">Dias restantes</string>
+    <!--endregion-->
+
+    <string name="delete">DELETE</string>
+</resources>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:id="@+id/layout_cadastrar"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/editTextTarNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="16sp"
+                android:inputType="text"
+                android:hint="@string/tarNomeText" />
+
+            <EditText
+                android:id="@+id/editTextTarDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="16sp"
+                android:hint="@string/tarDescText"
+                android:ems="10"
+                android:inputType="textMultiLine" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/tarPrioridadeText"
+                android:layout_margin="8dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:orientation="horizontal"
+                android:layout_margin="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/radioBaixa"
+                    android:text="@string/baixa"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/radioMedia"
+                    android:text="@string/media"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/radioAlta"
+                    android:textSize="14sp"
+                    android:text="@string/alta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
+            <EditText
+                android:id="@+id/editTextTarPrazo"
+                android:layout_width="wrap_content"
+                android:hint="@string/tarPrazoText"
+                android:textSize="16sp"
+                android:layout_margin="8dp"
+                android:inputType="number"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/checkBoxNotificacao"
+                android:layout_width="wrap_content"
+                android:text="@string/checkboxText"
+                android:layout_margin="8dp"
+                android:textSize="14sp"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btnCadastrarTar"
+                style="@style/buttonTheme"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_margin="8dp"
+                android:padding="10dp"
+                android:text="@string/cadastrarTarText"
+                android:textSize="16sp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
