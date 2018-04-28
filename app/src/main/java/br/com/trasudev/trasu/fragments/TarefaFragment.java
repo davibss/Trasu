@@ -226,7 +226,7 @@ public class TarefaFragment extends Fragment implements
                 LayoutInflater inflateDialog = getLayoutInflater();
                 View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("Cadastrar");
+                alert.setTitle("Cadastrar tarefa");
                 alert.setView(alertLayout);
                 dialog = alert.create();
                 dialog.show();

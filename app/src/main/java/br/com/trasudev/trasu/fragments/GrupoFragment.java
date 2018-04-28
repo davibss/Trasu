@@ -1,14 +1,31 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.trasudev.trasu.R;
+import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.Grupo;
+import br.com.trasudev.trasu.entidades.TarefaIndividual;
+
+import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,8 +36,14 @@ import br.com.trasudev.trasu.R;
  * create an instance of this fragment.
  */
 public class GrupoFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    private FloatingActionButton floatingActionButton;
+    private AlertDialog dialog;
+
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -34,15 +57,6 @@ public class GrupoFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GrupoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static GrupoFragment newInstance(String param1, String param2) {
         GrupoFragment fragment = new GrupoFragment();
         Bundle args = new Bundle();
@@ -53,19 +67,98 @@ public class GrupoFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        firebaseUser = Conexao.getFirebaseUser();
+        verificarUser();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initFirebase();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
+    private void initFirebase() {
+        FirebaseApp.initializeApp(getContext());
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (!calledAlready) {
+            firebaseDatabase.setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+        databaseReference = firebaseDatabase.getReference();
+    }
+
+    private void verificarUser() {
+        if (firebaseUser == null){
+            throw new RuntimeException(getContext().toString()
+                    + " must implement OnFragmentInteractionListener");
+        }else{
+            //
+        }
+    }
+
+    private void onClickButton() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = getLayoutInflater();
+                View alertLayout = inflater.inflate(R.layout.cadastrar_tarefa_layout, null);
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Cadastrar grupo");
+                alert.setView(alertLayout);
+                dialog = alert.create();
+                dialog.show();
+                inicializarComponentesTarefa(alertLayout);
+            }
+        });
+    }
+
+    private void inicializarComponentes(View rootView){
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
+    }
+
+    private void inicializarComponentesTarefa(View alertLayout) {
+        final EditText editNome = alertLayout.findViewById(R.id.editTextGrpNome);
+        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarGrp);
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Grupo().cadastrar(databaseReference,editNome.getText().toString(),
+                        firebaseUser.getUid());
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void onClickEvent() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflateDialog = getLayoutInflater();
+                View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Cadastrar");
+                alert.setView(alertLayout);
+                dialog = alert.create();
+                dialog.show();
+                inicializarComponentesTarefa(alertLayout);
+            }
+        });
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_grupos, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_grupos, container,false);
+        inicializarComponentes(rootView);
+        onClickEvent();
+        //eventoDatabase();
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

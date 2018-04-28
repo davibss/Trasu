@@ -85,4 +85,7 @@
     <!--endregion-->
 
     <string name="delete">Excluir</string>
+
+    <string name="grpNome">Nome do grupo</string>
+    <string name="grpCadastrar">Cadastrar</string>
 </resources>
