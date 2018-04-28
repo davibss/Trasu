@@ -1,6 +1,7 @@
 package br.com.trasudev.trasu.classes;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 import br.com.trasudev.trasu.R;
 import com.bumptech.glide.Glide;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
@@ -20,16 +25,17 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     private List<TarefaIndividual> cartList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, description, price;
+        public TextView name, prioridade, prazo;
         public ImageView thumbnail;
-        public RelativeLayout viewBackground, viewForeground;
+        public RelativeLayout viewBackground;
+        public ConstraintLayout viewForeground;
 
         public MyViewHolder(View view) {
             super(view);
-            name = view.findViewById(R.id.name);
-            description = view.findViewById(R.id.description);
-            price = view.findViewById(R.id.price);
-            thumbnail = view.findViewById(R.id.thumbnail);
+            name = view.findViewById(R.id.nome_tarefa);
+            prioridade = view.findViewById(R.id.prioridade_tarefa);
+            prazo = view.findViewById(R.id.prazo_tarefa);
+            thumbnail = view.findViewById(R.id.img_tarefa);
             viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
         }
@@ -53,11 +59,10 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final TarefaIndividual item = cartList.get(position);
         holder.name.setText(item.getTar_nome());
-        holder.description.setText(item.getTar_descricao());
-        holder.price.setText("₹" + item.getTar_prazo());
-
+        holder.prioridade.setText(item.getTar_descricao());
+        holder.prazo.setText(subtrairDatas(item));
         Glide.with(context)
-                .load(item.getTar_prioridade())
+                .load(R.drawable.ic_group_black_24dp)
                 .into(holder.thumbnail);
     }
 
@@ -78,5 +83,21 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         cartList.add(position, item);
         // notify item added by position
         notifyItemInserted(position);
+    }
+
+    private String subtrairDatas(TarefaIndividual tarefa) {
+        Calendar a = Calendar.getInstance();
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date data = new Date();
+        try {
+            data = formato.parse(tarefa.getTar_dataFinal());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        a.setTime(data);//data maior
+        Calendar b = Calendar.getInstance();
+        b.setTime(new Date());// data menor
+        a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
+        return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
     }
 }
