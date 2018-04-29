@@ -111,6 +111,10 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         return cartList.size();
     }
 
+    public TarefaIndividual getItem(int position){
+        return cartList.get(position);
+    }
+
     public void removeItem(int position) {
         cartList.remove(position);
         // notify the item removed by position
@@ -125,7 +129,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         notifyItemInserted(position);
     }
 
-    private String subtrairDatas(TarefaIndividual tarefa) {
+    public String subtrairDatas(TarefaIndividual tarefa) {
         Calendar a = Calendar.getInstance();
         SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
         Date data = new Date();
@@ -138,17 +142,6 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         Calendar b = Calendar.getInstance();
         b.setTime(new Date());// data menor
         a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
-
-        /*String retorno = null;
-
-
-        if (b.getTime().before(a.getTime())){
-            retorno = ;
-        }else if (b.after(a)){
-            retorno = "Expirado";
-        }else if (b.equals(a)){
-            retorno = "0";
-        }*/
         return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
     }
 }

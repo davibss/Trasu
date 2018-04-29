@@ -221,6 +221,49 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
+    private void alterarComponentesTarefa(View alertLayout, TarefaIndividual tarefa){
+        final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
+        final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
+        final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
+        final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
+        final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
+        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        editNome.setText(tarefa.getTar_nome());
+        editDescricao.setText(tarefa.getTar_descricao());
+        RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
+        RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
+        RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
+        if (tarefa.getTar_prioridade().equals("Alta")){
+            buttonAlta.setChecked(true);
+        }else if (tarefa.getTar_prioridade().equals("Média")){
+            buttonMedia.setChecked(true);
+        }else if (tarefa.getTar_prioridade().equals("Baixa")){
+            buttonBaixa.setChecked(true);
+        }
+        editPrazo.setText(String.valueOf(tarefa.getTar_prazo()));
+        if (tarefa.getTar_notificacao() == 1) {
+            checkBoxNotificacao.setChecked(true);
+        }
+        btnCadastrar.setText("Alterar");
+        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton button = (RadioButton) group.findViewById(i);
+                checkValue = button.getText().toString();
+            }
+        });
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
+                        editDescricao.getText().toString(),checkValue,
+                        Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
+                        checkBoxNotificacao.isChecked()?1:0);
+                dialog.dismiss();*/
+            }
+        });
+    }
+
     private void onClickEvent() {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,19 +294,6 @@ public class TarefaFragment extends Fragment implements
 
     private void recyclerViewEvent(View rootView) {
         recyclerView = rootView.findViewById(R.id.recycler_view);
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-
-                    }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        alert("Pare com isso onee-chan '>//<");
-                        TextView txtTeste = view.findViewById(R.id.prazo_tarefa);
-                        list_opcoes(txtTeste.getText().toString());
-                    }
-                })
-        );
         coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
         cartList = new ArrayList<>();
         mAdapter = new CartListAdapter(getActivity(), cartList);
@@ -276,6 +306,35 @@ public class TarefaFragment extends Fragment implements
                 RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
                 this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+        ItemTouchHelper.SimpleCallback teste = new RecyclerItemTouchHelper(0,ItemTouchHelper.LEFT,this){
+            @Override
+            public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos,
+                                RecyclerView.ViewHolder target, int toPos, int x, int y) {
+                super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+                recyclerView.addOnItemTouchListener(
+                        new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override public void onItemClick(View view, int position) {
+                                //alert("E-eu sou a Tarefa-chan \nPare com isso onee-chan '>//<");
+                            }
+
+                            @Override public void onLongItemClick(View view, int position) {
+                                //list_opcoes(mAdapter.getItem(position));
+                            }
+                        })
+                );
+            }
+        };
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        //alert("E-eu sou a Tarefa-chan \nPare com isso onee-chan '>//<");
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        list_opcoes(mAdapter.getItem(position));
+                    }
+                })
+        );
         eventoDatabaseCard();
     }
 
@@ -303,6 +362,17 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        //null
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        //null
+                    }
+                })
+        );
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -343,7 +413,7 @@ public class TarefaFragment extends Fragment implements
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
-    private void list_opcoes(final String pontos){
+    public void list_opcoes(final TarefaIndividual tarefa){
         ArrayList<String> itens = new ArrayList<String>();
         itens.add("   Visualizar/Alterar");
         itens.add("   Finalizar");
@@ -353,14 +423,21 @@ public class TarefaFragment extends Fragment implements
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 if (arg1 == 0){
-                    //
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Visualizar/alterar tarefa");
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    alterarComponentesTarefa(alertLayout, tarefa);
                 }else if (arg1 == 1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Você ganhou "+pontos+" pontos!")
+                    builder.setMessage("Você ganhou "+mAdapter.subtrairDatas(tarefa)+" pontos!")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    //
+                                    new TarefaIndividual().finalizar(databaseReference, tarefa);
                                 }
                             });
                     AlertDialog alert = builder.create();

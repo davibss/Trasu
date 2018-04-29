@@ -51,7 +51,7 @@ public class TarefaIndividual {
     public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa){
         databaseReference.child("tarefa_individual").
                 child(tarefa.getTar_id()).
-                child("tar_status").setValue(0);
+                child("tar_status").setValue(1);
     }
 
     public static String somarData (int dias,Date data) {
