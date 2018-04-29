@@ -26,6 +26,7 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:scrollbars="vertical" />
 
         <android.support.design.widget.FloatingActionButton
