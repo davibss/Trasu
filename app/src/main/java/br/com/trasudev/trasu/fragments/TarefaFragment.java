@@ -254,14 +254,13 @@ public class TarefaFragment extends Fragment implements
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        alert("Clicadinha");
+
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
                         alert("Pare com isso onee-chan '>//<");
                         TextView txtTeste = view.findViewById(R.id.prazo_tarefa);
-                        alert(txtTeste.getText().toString());
-                        list_opcoes();
+                        list_opcoes(txtTeste.getText().toString());
                     }
                 })
         );
@@ -320,6 +319,8 @@ public class TarefaFragment extends Fragment implements
 
 
 
+
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -342,10 +343,10 @@ public class TarefaFragment extends Fragment implements
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
-    private void list_opcoes(){
+    private void list_opcoes(final String pontos){
         ArrayList<String> itens = new ArrayList<String>();
-        itens.add("Visualizar/Alterar");
-        itens.add("Finalizar");
+        itens.add("   Visualizar/Alterar");
+        itens.add("   Finalizar");
         //adapter utilizando um layout customizado (TextView)
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -355,7 +356,7 @@ public class TarefaFragment extends Fragment implements
                     //
                 }else if (arg1 == 1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Você ganhou X pontos!")
+                    builder.setMessage("Você ganhou "+pontos+" pontos!")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

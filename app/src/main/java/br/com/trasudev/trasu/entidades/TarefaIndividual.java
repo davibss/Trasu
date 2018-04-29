@@ -48,6 +48,12 @@ public class TarefaIndividual {
                 .removeValue();
     }
 
+    public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa){
+        databaseReference.child("tarefa_individual").
+                child(tarefa.getTar_id()).
+                child("tar_status").setValue(0);
+    }
+
     public static String somarData (int dias,Date data) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);

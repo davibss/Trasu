@@ -64,6 +64,8 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         return new MyViewHolder(itemView);
     }
 
+
+
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final TarefaIndividual item = cartList.get(position);
@@ -80,7 +82,6 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             String data = formato.format(new Date());
             dataAtual.setTime(formato.parse(data));
             dataFinal.setTime(formato.parse(item.getTar_dataFinal()));
-            Log.d("DATAS","ATUAL:"+dataAtual.getTime()+"FINAL:"+dataFinal.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
