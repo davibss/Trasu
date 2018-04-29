@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:elevation="@dimen/padd_10"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
     android:layout_height="70dp">
     <RelativeLayout
         android:id="@+id/view_background"

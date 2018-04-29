@@ -157,7 +157,6 @@ public class GrupoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_grupos, container,false);
         inicializarComponentes(rootView);
         onClickEvent();
-        //eventoDatabase();
         return rootView;
     }
 
