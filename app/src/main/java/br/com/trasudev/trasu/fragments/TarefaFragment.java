@@ -3,6 +3,7 @@ package br.com.trasudev.trasu.fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
@@ -44,6 +47,7 @@ import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.classes.TarefaAdapter;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
@@ -67,6 +71,7 @@ public class TarefaFragment extends Fragment implements
     DatabaseReference databaseReference;
     private String checkValue;
     private AlertDialog dialog;
+    private AlertDialog alerta;
     //private ListView listView;
     private List<TarefaIndividual> listTarefa = new ArrayList<TarefaIndividual>();
     //private ArrayAdapter<TarefaIndividual> arrayAdapterTarefa;
@@ -160,10 +165,6 @@ public class TarefaFragment extends Fragment implements
                         listTarefa.add(p);
                     }
                 }
-                /*arrayAdapterTarefa = new ArrayAdapter<TarefaIndividual>(getActivity(),
-                        android.R.layout.simple_list_item_1,listTarefa);*/
-                //listView.setAdapter(arrayAdapterTarefa);
-                //listView.setAdapter(new TarefaAdapter(getActivity(),listTarefa));
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -234,14 +235,6 @@ public class TarefaFragment extends Fragment implements
                 inicializarComponentesTarefa(alertLayout);
             }
         });
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                tarefaSelecionada = (TarefaIndividual) adapterView.getItemAtPosition(i);
-                alert("Nome: "+tarefaSelecionada.getTar_nome()+"\nDescrição: "+
-                        tarefaSelecionada.getTar_descricao());
-            }
-        });*/
     }
 
     @Override
@@ -258,6 +251,20 @@ public class TarefaFragment extends Fragment implements
 
     private void recyclerViewEvent(View rootView) {
         recyclerView = rootView.findViewById(R.id.recycler_view);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        alert("Clicadinha");
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        alert("Pare com isso onee-chan '>//<");
+                        TextView txtTeste = view.findViewById(R.id.prazo_tarefa);
+                        alert(txtTeste.getText().toString());
+                        list_opcoes();
+                    }
+                })
+        );
         coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
         cartList = new ArrayList<>();
         mAdapter = new CartListAdapter(getActivity(), cartList);
@@ -265,9 +272,7 @@ public class TarefaFragment extends Fragment implements
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mAdapter);
-
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new
                 RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
                 this);
@@ -313,6 +318,8 @@ public class TarefaFragment extends Fragment implements
         }
     }
 
+
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -333,6 +340,36 @@ public class TarefaFragment extends Fragment implements
 
     private void alert(String msg) {
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    private void list_opcoes(){
+        ArrayList<String> itens = new ArrayList<String>();
+        itens.add("Visualizar/Alterar");
+        itens.add("Finalizar");
+        //adapter utilizando um layout customizado (TextView)
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                if (arg1 == 0){
+                    //
+                }else if (arg1 == 1){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Você ganhou X pontos!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                alerta.dismiss();
+            }
+        });
+        alerta = builder.create();
+        alerta.show();
     }
 
     @Override

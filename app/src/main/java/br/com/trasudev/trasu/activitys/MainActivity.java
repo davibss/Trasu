@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout drawer;
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
-    private TextView txtName, txtWebsite;
+    private TextView txtName, txtWebsite, txtPontos;
     private Toolbar toolbar;
     //private FloatingActionButton fab;
 
@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements
         navHeader = navigationView.getHeaderView(0);
         txtName = (TextView) navHeader.findViewById(R.id.name);
         txtWebsite = (TextView) navHeader.findViewById(R.id.website);
+        txtPontos = (TextView) navHeader.findViewById(R.id.pontos_usuario);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements
     private void loadNavHeader() {
         // name, website
         firebaseUser = Conexao.getFirebaseUser();
-        new Usuario().buscar(databaseReference,firebaseUser,txtWebsite,txtName);
+        new Usuario().buscar(databaseReference,firebaseUser,txtWebsite,txtName,txtPontos);
         // loading header background image
         Glide.with(this).load(urlNavHeaderBg)
                 .crossFade()

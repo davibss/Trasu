@@ -47,7 +47,7 @@ public class Usuario {
     }
 
     public void buscar(DatabaseReference databaseReference, final FirebaseUser firebaseUser,
-                       final TextView txtWebsite, final TextView txtName){
+                       final TextView txtWebsite, final TextView txtName, final TextView txtPontos){
         databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -56,6 +56,7 @@ public class Usuario {
                     if (userSelect.getUser_id().equals(firebaseUser.getUid())){
                         txtName.setText(userSelect.getUser_nome());
                         txtWebsite.setText(userSelect.getUser_email());
+                        txtPontos.setText("Pontos: " + String.valueOf(userSelect.getUser_pontos()));
                     }
                 }
             }
