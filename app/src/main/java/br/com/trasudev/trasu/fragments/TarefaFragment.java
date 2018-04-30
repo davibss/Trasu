@@ -235,10 +235,13 @@ public class TarefaFragment extends Fragment implements
         RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
         if (tarefa.getTar_prioridade().equals("Alta")){
             buttonAlta.setChecked(true);
+            checkValue = buttonAlta.getText().toString();
         }else if (tarefa.getTar_prioridade().equals("Média")){
             buttonMedia.setChecked(true);
+            checkValue = buttonMedia.getText().toString();
         }else if (tarefa.getTar_prioridade().equals("Baixa")){
             buttonBaixa.setChecked(true);
+            checkValue = buttonBaixa.getText().toString();
         }
         editPrazo.setText(String.valueOf(tarefa.getTar_prazo()));
         if (tarefa.getTar_notificacao() == 1) {
