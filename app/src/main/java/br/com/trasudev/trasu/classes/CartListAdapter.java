@@ -75,7 +75,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
     }
 
     private void prazoEvent(MyViewHolder holder, TarefaIndividual item) {
-        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
         Calendar dataAtual = Calendar.getInstance();
         Calendar dataFinal = Calendar.getInstance();
         try {
@@ -98,7 +98,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         }else if (dataAtual.after(dataFinal)){
             holder.dias.setText("Expirado");
             holder.thumbnail.setImageResource(R.drawable.ic_cancel_black_24dp);
-            holder.prazo.setText("0");
+            holder.prazo.setText(subtrairDatas(item));
         }else if (dataAtual.equals(dataFinal)){
             holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
             holder.prazo.setText("0");
@@ -131,17 +131,23 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
 
     public String subtrairDatas(TarefaIndividual tarefa) {
         Calendar a = Calendar.getInstance();
-        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
-        Date data = new Date();
+        Calendar b = Calendar.getInstance();
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+        //Date data = new Date();
         try {
-            data = formato.parse(tarefa.getTar_dataFinal());
+            //data = formato.parse(tarefa.getTar_dataFinal());
+            a.setTime(formato.parse(tarefa.getTar_dataFinal()));
+            b.setTime(formato.parse(formato.format(new Date())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        a.setTime(data);//data maior
-        Calendar b = Calendar.getInstance();
-        b.setTime(new Date());// data menor
-        a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
-        return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
+        if (b.before(a)){
+            a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
+            return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
+        }else if (b.after(a)){
+            return "0";
+        }else{
+            return "1";
+        }
     }
 }

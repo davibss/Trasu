@@ -221,7 +221,7 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
-    private void alterarComponentesTarefa(View alertLayout, TarefaIndividual tarefa){
+    private void alterarComponentesTarefa(View alertLayout, final TarefaIndividual tarefa){
         final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
@@ -255,11 +255,11 @@ public class TarefaFragment extends Fragment implements
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
-                        editDescricao.getText().toString(),checkValue,
-                        Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
-                        checkBoxNotificacao.isChecked()?1:0);
-                dialog.dismiss();*/
+                new TarefaIndividual().alterar(databaseReference,tarefa,
+                        editNome.getText().toString(), editDescricao.getText().toString(),
+                        checkValue, Integer.parseInt(editPrazo.getText().toString()),
+                                checkBoxNotificacao.isChecked()?1:0);
+                dialog.dismiss();
             }
         });
     }
@@ -312,8 +312,10 @@ public class TarefaFragment extends Fragment implements
                     recyclerView.setLongClickable(true);
                 }else if (actionState == 1){
                     recyclerView.setLongClickable(false);
-                }else if (actionState == 2){
+                }else if (actionState == 4){
                     recyclerView.setLongClickable(true);
+                }else if (actionState == 2){
+                    recyclerView.setLongClickable(false);
                 }
             }
         };
@@ -417,7 +419,7 @@ public class TarefaFragment extends Fragment implements
                     dialog = alert.create();
                     dialog.show();
                     alterarComponentesTarefa(alertLayout, tarefa);
-                }else if (arg1 == 1){
+                }else if ((arg1 == 1)&&tarefa.getTar_status()==0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
                             mAdapter.subtrairDatas(tarefa),tarefa, false)+" pontos!")
@@ -430,6 +432,8 @@ public class TarefaFragment extends Fragment implements
                             });
                     AlertDialog alert = builder.create();
                     alert.show();
+                }else if ((arg1 == 1)&&tarefa.getTar_status()==1){
+                    alert("Tarefa já finalizada");
                 }
                 alerta.dismiss();
             }

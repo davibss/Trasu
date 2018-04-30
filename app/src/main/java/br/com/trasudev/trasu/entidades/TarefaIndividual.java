@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,6 +69,29 @@ public class TarefaIndividual {
                 child("user_pontos").setValue(equacaoPontos(pontos,tarefa,true));
     }
 
+    public void alterar(DatabaseReference databaseReference, TarefaIndividual tarefa,
+                        String nome, String descricao, String prioridade, int prazo,
+                        int notificacao){
+        tarefa.setTar_nome(nome);
+        tarefa.setTar_descricao(descricao);
+        tarefa.setTar_prioridade(prioridade);
+        //region Data
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        Date data = new Date();
+        try {
+            data = formato.parse(tarefa.getTar_dataInicial());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tarefa.setTar_dataFinal(somarData(prazo,data));
+        //endregion
+        tarefa.setTar_prazo(prazo);
+        tarefa.setTar_notificacao(notificacao);
+        databaseReference.child("tarefa_individual").
+                child(tarefa.getTar_id()).
+                setValue(tarefa);
+    }
+
     public int equacaoPontos(String pontos, TarefaIndividual tarefa, boolean soma){
         int prioridade=0;
         if (tarefa.getTar_prioridade().equals("Alta")){
@@ -78,11 +102,15 @@ public class TarefaIndividual {
             prioridade=1;
         }
         String[] oldPoint = txtPontos.getText().toString().split("Pontos: ");
-        if (soma){
-            return (int)Math.floor(Double.parseDouble(oldPoint[1].trim())+
-                    (Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
-        }else {
-            return (int)Math.floor((Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+        if (Double.parseDouble(pontos) != 0){
+            if (soma){
+                return (int)Math.ceil(Double.parseDouble(oldPoint[1].trim())+
+                        (Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+            }else {
+                return (int)Math.ceil((Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+            }
+        }else{
+            return 0;
         }
     }
 
