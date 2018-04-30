@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout drawer;
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
-    private TextView txtName, txtWebsite, txtPontos;
+    private TextView txtName, txtWebsite;
+    public static TextView txtPontos;
     private Toolbar toolbar;
     //private FloatingActionButton fab;
 

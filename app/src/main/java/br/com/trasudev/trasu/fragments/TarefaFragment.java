@@ -302,36 +302,33 @@ public class TarefaFragment extends Fragment implements
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new
-                RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
-                this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        ItemTouchHelper.SimpleCallback teste = new RecyclerItemTouchHelper(0,ItemTouchHelper.LEFT,this){
+        recyclerView.setLongClickable(true);
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
+                this){
             @Override
-            public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos,
-                                RecyclerView.ViewHolder target, int toPos, int x, int y) {
-                super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
-                recyclerView.addOnItemTouchListener(
-                        new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                            @Override public void onItemClick(View view, int position) {
-                                //alert("E-eu sou a Tarefa-chan \nPare com isso onee-chan '>//<");
-                            }
-
-                            @Override public void onLongItemClick(View view, int position) {
-                                //list_opcoes(mAdapter.getItem(position));
-                            }
-                        })
-                );
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+                if (actionState == 0){
+                    recyclerView.setLongClickable(true);
+                }else if (actionState == 1){
+                    recyclerView.setLongClickable(false);
+                }else if (actionState == 2){
+                    recyclerView.setLongClickable(true);
+                }
             }
         };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        //alert("E-eu sou a Tarefa-chan \nPare com isso onee-chan '>//<");
+                        //
                     }
-
                     @Override public void onLongItemClick(View view, int position) {
-                        list_opcoes(mAdapter.getItem(position));
+                        if (recyclerView.isLongClickable()){
+                            list_opcoes(mAdapter.getItem(position));
+                        }else {
+                            //
+                        }
                     }
                 })
         );
@@ -362,17 +359,6 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        //null
-                    }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        //null
-                    }
-                })
-        );
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -433,11 +419,13 @@ public class TarefaFragment extends Fragment implements
                     alterarComponentesTarefa(alertLayout, tarefa);
                 }else if (arg1 == 1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Você ganhou "+mAdapter.subtrairDatas(tarefa)+" pontos!")
+                    builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
+                            mAdapter.subtrairDatas(tarefa),tarefa, false)+" pontos!")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    new TarefaIndividual().finalizar(databaseReference, tarefa);
+                                    new TarefaIndividual().finalizar(databaseReference, tarefa, firebaseUser,
+                                    mAdapter.subtrairDatas(tarefa));
                                 }
                             });
                     AlertDialog alert = builder.create();

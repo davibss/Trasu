@@ -32,7 +32,7 @@ public class Usuario {
 
     }
 
-    private static Usuario userSelect;
+    private Usuario userSelect;
 
     public void cadastrar(DatabaseReference databaseReference, String UID,String editNome,String editSenha, String editEmail,
                           String editTelefone){

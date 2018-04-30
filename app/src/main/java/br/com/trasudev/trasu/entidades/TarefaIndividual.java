@@ -1,11 +1,21 @@
 package br.com.trasudev.trasu.entidades;
 
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+
+import br.com.trasudev.trasu.R;
+import br.com.trasudev.trasu.activitys.MainActivity;
+
+import static br.com.trasudev.trasu.activitys.MainActivity.txtPontos;
 
 public class TarefaIndividual {
     private String tar_id;
@@ -48,10 +58,32 @@ public class TarefaIndividual {
                 .removeValue();
     }
 
-    public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa){
+    public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa,
+                          FirebaseUser firebaseUser, String pontos){
         databaseReference.child("tarefa_individual").
                 child(tarefa.getTar_id()).
                 child("tar_status").setValue(1);
+        databaseReference.child("usuario").
+                child(firebaseUser.getUid()).
+                child("user_pontos").setValue(equacaoPontos(pontos,tarefa,true));
+    }
+
+    public int equacaoPontos(String pontos, TarefaIndividual tarefa, boolean soma){
+        int prioridade=0;
+        if (tarefa.getTar_prioridade().equals("Alta")){
+            prioridade=3;
+        }else if (tarefa.getTar_prioridade().equals("Média")){
+            prioridade=2;
+        }else{
+            prioridade=1;
+        }
+        String[] oldPoint = txtPontos.getText().toString().split("Pontos: ");
+        if (soma){
+            return (int)Math.floor(Double.parseDouble(oldPoint[1].trim())+
+                    (Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+        }else {
+            return (int)Math.floor((Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+        }
     }
 
     public static String somarData (int dias,Date data) {
