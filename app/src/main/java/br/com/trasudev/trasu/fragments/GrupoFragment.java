@@ -2,6 +2,7 @@ package br.com.trasudev.trasu.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -60,6 +62,7 @@ public class GrupoFragment extends Fragment {
     DatabaseReference databaseReference;
     private FloatingActionButton floatingActionButton;
     private AlertDialog dialog;
+    private AlertDialog alerta;
 
     private RecyclerView recyclerView;
     private List<Grupo> cartList;
@@ -125,27 +128,11 @@ public class GrupoFragment extends Fragment {
         }
     }
 
-    private void onClickButton() {
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = getLayoutInflater();
-                View alertLayout = inflater.inflate(R.layout.cadastrar_tarefa_layout, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("Cadastrar grupo");
-                alert.setView(alertLayout);
-                dialog = alert.create();
-                dialog.show();
-                inicializarComponentesTarefa(alertLayout);
-            }
-        });
-    }
-
     private void inicializarComponentes(View rootView){
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
     }
 
-    private void inicializarComponentesTarefa(View alertLayout) {
+    private void inicializarComponentesGrupo(View alertLayout) {
         final EditText editNome = alertLayout.findViewById(R.id.editTextGrpNome);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarGrp);
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +156,7 @@ public class GrupoFragment extends Fragment {
                 alert.setView(alertLayout);
                 dialog = alert.create();
                 dialog.show();
-                inicializarComponentesTarefa(alertLayout);
+                inicializarComponentesGrupo(alertLayout);
             }
         });
     }
@@ -224,8 +211,7 @@ public class GrupoFragment extends Fragment {
                     }
                     @Override public void onLongItemClick(View view, int position) {
                         if (recyclerView.isLongClickable()){
-                            //list_opcoes(mAdapter.getItem(position));
-                            alert("Clicou no grupo de nome \n"+mAdapter.getItem(position).getGrp_nome());
+                            list_opcoes(mAdapter.getItem(position),position);
                         }else {
                             //
                         }
@@ -250,6 +236,52 @@ public class GrupoFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    public void list_opcoes(final Grupo grupo, final int position){
+        ArrayList<String> itens = new ArrayList<String>();
+        itens.add("   Visualizar/Alterar");
+        itens.add("   Adicionar integrantes");
+        itens.add("   Excluir");
+        //adapter utilizando um layout customizado (TextView)
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                if (arg1 == 0){
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Visualizar/alterar grupo");
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    alterarComponentesGrupo(alertLayout, grupo);
+                }else if (arg1 == 1) {
+                    //Adicionar integrantes
+                }else if (arg1 == 2){
+                    new Grupo().excluir(databaseReference,grupo);
+                    mAdapter.removeItem(position);
+                }
+                alerta.dismiss();
+            }
+        });
+        alerta = builder.create();
+        alerta.show();
+    }
+
+    private void alterarComponentesGrupo(View alertLayout,final Grupo grupo) {
+        final EditText editNome = alertLayout.findViewById(R.id.editTextGrpNome);
+        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarGrp);
+        editNome.setText(grupo.getGrp_nome());
+        btnCadastrar.setText("Alterar");
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Grupo().alterar(databaseReference,grupo,editNome.getText().toString());
+                dialog.dismiss();
             }
         });
     }
