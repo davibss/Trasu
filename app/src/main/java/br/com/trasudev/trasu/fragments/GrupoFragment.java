@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.entidades.Grupo;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
+import br.com.trasudev.trasu.entidades.Usuario;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
@@ -186,7 +188,30 @@ public class GrupoFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recycler_view);
         coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
         cartList = new ArrayList<>();
-        mAdapter = new CartListGroupAdapter(getActivity(), cartList);
+        mAdapter = new CartListGroupAdapter(getActivity(), cartList){
+            @Override
+            public void onBindViewHolder(final MyViewHolder holder, int position) {
+                final Grupo item = cartList.get(position);
+                holder.name.setText(String.valueOf("Nome: " + item.getGrp_nome()));
+                holder.integrantes.setText(String.valueOf("Integrantes: " + item.getGrp_integrantes()));
+                databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot obj: dataSnapshot.getChildren()){
+                            Usuario user = obj.getValue(Usuario.class);
+                            if (user.getUser_id().equals(item.getGrp_lider())){
+                                holder.lider.setText(String.valueOf("Líder: " + user.getUser_nome()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        };
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

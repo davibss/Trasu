@@ -29,8 +29,6 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTapEvent(MotionEvent e) {
-                Toast.makeText(context,"E-eu sou a Tarefa-chan \nPare com isso onee-chan >//<'",
-                        Toast.LENGTH_SHORT).show();
                 return super.onDoubleTapEvent(e);
             }
 

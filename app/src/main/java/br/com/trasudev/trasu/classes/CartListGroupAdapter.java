@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import br.com.trasudev.trasu.R;
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -41,7 +42,7 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
 
         public MyViewHolder(View view) {
             super(view);
-            name = view.findViewById(R.id.nome_tarefa);
+            name = view.findViewById(R.id.nome_group);
             integrantes = view.findViewById(R.id.integrantes_group);
             lider = view.findViewById(R.id.lider_group);
             img_group = view.findViewById(R.id.img_group);
