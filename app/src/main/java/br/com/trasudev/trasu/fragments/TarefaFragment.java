@@ -364,6 +364,7 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        recyclerView.setLongClickable(false);
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -376,6 +377,7 @@ public class TarefaFragment extends Fragment implements
             new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()));
             mAdapter.removeItem(viewHolder.getAdapterPosition());
         }
+        recyclerView.setLongClickable(true);
     }
 
 
