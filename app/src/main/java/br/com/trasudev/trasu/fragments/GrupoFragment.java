@@ -4,8 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +19,25 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.trasudev.trasu.R;
+import br.com.trasudev.trasu.classes.CartListAdapter;
+import br.com.trasudev.trasu.classes.CartListGroupAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
+import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.entidades.Grupo;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 
@@ -42,6 +58,11 @@ public class GrupoFragment extends Fragment {
     DatabaseReference databaseReference;
     private FloatingActionButton floatingActionButton;
     private AlertDialog dialog;
+
+    private RecyclerView recyclerView;
+    private List<Grupo> cartList;
+    private CartListGroupAdapter mAdapter;
+    private CoordinatorLayout coordinatorLayout;
 
 
     private static final String ARG_PARAM1 = "param1";
@@ -157,8 +178,61 @@ public class GrupoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_grupos, container,false);
         inicializarComponentes(rootView);
         onClickEvent();
+        recyclerViewEvent(rootView);
         return rootView;
     }
+
+    private void recyclerViewEvent(View rootView) {
+        recyclerView = rootView.findViewById(R.id.recycler_view);
+        coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
+        cartList = new ArrayList<>();
+        mAdapter = new CartListGroupAdapter(getActivity(), cartList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setLongClickable(true);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        //
+                    }
+                    @Override public void onLongItemClick(View view, int position) {
+                        if (recyclerView.isLongClickable()){
+                            //list_opcoes(mAdapter.getItem(position));
+                            alert("Clicou no grupo de nome \n"+mAdapter.getItem(position).getGrp_nome());
+                        }else {
+                            //
+                        }
+                    }
+                })
+        );
+        eventoDatabaseCard();
+    }
+
+    private void eventoDatabaseCard() {
+        databaseReference.child("grupo").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //listTarefa.clear();
+                cartList.clear();
+                for (DataSnapshot obj: dataSnapshot.getChildren()){
+                    Grupo g = obj.getValue(Grupo.class);
+                    cartList.add(g);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void alert(String msg) {
+        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -184,16 +258,6 @@ public class GrupoFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
