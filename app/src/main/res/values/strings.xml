@@ -86,6 +86,11 @@
 
     <string name="delete">Excluir</string>
 
+    <!--region Grupos-->
     <string name="grpNome">Nome do grupo</string>
     <string name="grpCadastrar">Cadastrar</string>
+    <string name="grpNomeList">Nome: </string>
+    <string name="integrantesList">Intengrates: </string>
+    <string name="liderList">Líder: </string>
+    <!--endregion-->
 </resources>
