@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Grupo {
@@ -11,6 +12,7 @@ public class Grupo {
     private String grp_nome;
     private String grp_lider;
     private int grp_integrantes;
+    private HashMap<String,Usuario> integrantes;
 
     public Grupo(){
 
@@ -21,9 +23,12 @@ public class Grupo {
         this.setGrp_nome(nome);
         this.setGrp_lider(user_id);
         this.setGrp_integrantes(1);
+        HashMap<String,Usuario> hashMap = new HashMap<String, Usuario>();
+        Usuario user = new Usuario();
+        user.setUser_id(user_id);
+        hashMap.put(user_id,user);
+        this.setIntegrantes(hashMap);
         databaseReference.child("grupo").child(this.getGrp_id()).setValue(this);
-        databaseReference.child("grupo").child(this.getGrp_id()).
-                child("integrantes").child("user_id").setValue(user_id);
     }
 
     public void excluir(DatabaseReference databaseReference, Grupo grupo){
@@ -69,5 +74,13 @@ public class Grupo {
 
     public void setGrp_integrantes(int grp_integrantes) {
         this.grp_integrantes = grp_integrantes;
+    }
+
+    public HashMap<String, Usuario> getIntegrantes() {
+        return integrantes;
+    }
+
+    public void setIntegrantes(HashMap<String, Usuario> integrantes) {
+        this.integrantes = integrantes;
     }
 }

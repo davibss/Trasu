@@ -177,10 +177,15 @@ public class GrupoFragment extends Fragment {
         cartList = new ArrayList<>();
         mAdapter = new CartListGroupAdapter(getActivity(), cartList){
             @Override
-            public void onBindViewHolder(final MyViewHolder holder, int position) {
+            public void onBindViewHolder(final MyViewHolder holder,final int position) {
+                super.onBindViewHolder(holder, position);
                 final Grupo item = cartList.get(position);
-                holder.name.setText(String.valueOf("Nome: " + item.getGrp_nome()));
-                holder.integrantes.setText(String.valueOf("Integrantes: " + item.getGrp_integrantes()));
+                holder.menu_grupo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        list_opcoes(mAdapter.getItem(position),position);
+                    }
+                });
                 databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -204,20 +209,6 @@ public class GrupoFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLongClickable(true);
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        //
-                    }
-                    @Override public void onLongItemClick(View view, int position) {
-                        if (recyclerView.isLongClickable()){
-                            list_opcoes(mAdapter.getItem(position),position);
-                        }else {
-                            //
-                        }
-                    }
-                })
-        );
         eventoDatabaseCard();
     }
 
@@ -229,8 +220,11 @@ public class GrupoFragment extends Fragment {
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     Grupo g = obj.getValue(Grupo.class);
-                    cartList.add(g);
-                    mAdapter.notifyDataSetChanged();
+                    if (g.getIntegrantes().containsKey(firebaseUser.getUid())){
+                        alert("TEM SIM");
+                        cartList.add(g);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             }
             @Override
@@ -244,6 +238,7 @@ public class GrupoFragment extends Fragment {
         ArrayList<String> itens = new ArrayList<String>();
         itens.add("   Visualizar/Alterar");
         itens.add("   Adicionar integrantes");
+        itens.add("   Ver integrantes");
         itens.add("   Excluir");
         //adapter utilizando um layout customizado (TextView)
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
@@ -261,7 +256,18 @@ public class GrupoFragment extends Fragment {
                     alterarComponentesGrupo(alertLayout, grupo);
                 }else if (arg1 == 1) {
                     //Adicionar integrantes
+                    Usuario user = new Usuario();
+                    user.setUser_id("NW2T7uj3Grcm7ixwBE0qHyhK8Gt2");
+                    databaseReference.child("grupo").child(grupo.getGrp_id()).child("integrantes").
+                            child(user.getUser_id()).setValue(user);
                 }else if (arg1 == 2){
+                    // Ver integrantes
+                    Log.d("IDS","IDS DOS INTEGRANTES");
+                    for (Usuario user:grupo.getIntegrantes().values()) {
+                        Log.d("ID",user.getUser_id());
+                        alert(user.getUser_id());
+                    }
+                }else if (arg1 == 3){
                     new Grupo().excluir(databaseReference,grupo);
                     mAdapter.removeItem(position);
                 }

@@ -299,44 +299,26 @@ public class TarefaFragment extends Fragment implements
         recyclerView = rootView.findViewById(R.id.recycler_view);
         coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
         cartList = new ArrayList<>();
-        mAdapter = new CartListAdapter(getActivity(), cartList);
-
+        mAdapter = new CartListAdapter(getActivity(), cartList){
+            @Override
+            public void onBindViewHolder(MyViewHolder holder,final int position) {
+                super.onBindViewHolder(holder, position);
+                holder.menu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        list_opcoes(mAdapter.getItem(position));
+                    }
+                });
+            }
+        };
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLongClickable(true);
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
-                this){
-            @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                super.onSelectedChanged(viewHolder, actionState);
-                if (actionState == 0){
-                    recyclerView.setLongClickable(true);
-                }else if (actionState == 1){
-                    recyclerView.setLongClickable(false);
-                }else if (actionState == 4){
-                    recyclerView.setLongClickable(true);
-                }else if (actionState == 2){
-                    recyclerView.setLongClickable(false);
-                }
-            }
-        };
+                this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        //
-                    }
-                    @Override public void onLongItemClick(View view, int position) {
-                        if (recyclerView.isLongClickable()){
-                            list_opcoes(mAdapter.getItem(position));
-                        }else {
-                            //
-                        }
-                    }
-                })
-        );
         eventoDatabaseCard();
     }
 
@@ -362,9 +344,9 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
+
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        recyclerView.setLongClickable(false);
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -377,7 +359,6 @@ public class TarefaFragment extends Fragment implements
             new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()));
             mAdapter.removeItem(viewHolder.getAdapterPosition());
         }
-        recyclerView.setLongClickable(true);
     }
 
 

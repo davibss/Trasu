@@ -36,7 +36,7 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, integrantes, lider;
-        public ImageView img_group,img_lider;
+        public ImageView img_group,img_lider,menu_grupo;
         public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
 
@@ -47,6 +47,7 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
             lider = view.findViewById(R.id.lider_group);
             img_group = view.findViewById(R.id.img_group);
             img_lider = view.findViewById(R.id.img_lider);
+            menu_grupo = view.findViewById(R.id.menu_grupo);
             viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
         }

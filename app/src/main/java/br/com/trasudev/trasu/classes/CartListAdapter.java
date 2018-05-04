@@ -1,6 +1,9 @@
 package br.com.trasudev.trasu.classes;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,15 +15,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import br.com.trasudev.trasu.R;
 import com.bumptech.glide.Glide;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +42,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, prioridade, prazo, dias;
-        public ImageView thumbnail;
+        public ImageView thumbnail,menu;
         public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
 
@@ -45,6 +53,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             prazo = view.findViewById(R.id.prazo_tarefa);
             dias = view.findViewById(R.id.dias_rest);
             thumbnail = view.findViewById(R.id.img_tarefa);
+            menu = view.findViewById(R.id.menu_tarefa);
             viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
         }

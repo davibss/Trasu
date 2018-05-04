@@ -80,7 +80,7 @@
     <!--region Tarefa itens-->
     <string name="nome_tarefa">Nome:</string>
     <string name="prioridade_tarefa">Prioridade:</string>
-    <string name="prazo_tarefa">XX</string>
+    <string name="prazo_tarefa">X</string>
     <string name="dias_tarefa">Dias restantes</string>
     <!--endregion-->
 

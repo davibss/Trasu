@@ -24,7 +24,7 @@ public class Usuario {
     private String user_nome;
     private String user_senha;
     private String user_email;
-    private int user_pontos;
+    private Integer user_pontos;
     private String user_telefone;
     private String user_icon;
 
@@ -32,18 +32,17 @@ public class Usuario {
 
     }
 
-    private Usuario userSelect;
-
     public void cadastrar(DatabaseReference databaseReference, String UID,String editNome,String editSenha, String editEmail,
                           String editTelefone){
-        this.setUser_id(UID);
-        this.setUser_nome(editNome);
-        this.setUser_telefone(editTelefone);
-        this.setUser_pontos(0);
-        this.setUser_senha(editSenha);
-        this.setUser_email(editEmail);
-        this.setUser_icon("imagem");
-        databaseReference.child("usuario").child(this.getUser_id()).setValue(this);
+        Usuario user = new Usuario();
+        user.setUser_id(UID);
+        user.setUser_nome(editNome);
+        user.setUser_telefone(editTelefone);
+        user.setUser_pontos(0);
+        user.setUser_senha(editSenha);
+        user.setUser_email(editEmail);
+        user.setUser_icon("imagem");
+        databaseReference.child("usuario").child(user.getUser_id()).setValue(user);
     }
 
     public void buscar(DatabaseReference databaseReference, final FirebaseUser firebaseUser,
@@ -52,7 +51,7 @@ public class Usuario {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot obj : dataSnapshot.getChildren()){
-                    userSelect = obj.getValue(Usuario.class);
+                    Usuario userSelect = obj.getValue(Usuario.class);
                     if (userSelect.getUser_id().equals(firebaseUser.getUid())){
                         txtName.setText(userSelect.getUser_nome());
                         txtWebsite.setText(userSelect.getUser_email());
@@ -99,11 +98,11 @@ public class Usuario {
         this.user_email = user_email;
     }
 
-    public int getUser_pontos() {
+    public Integer getUser_pontos() {
         return user_pontos;
     }
 
-    public void setUser_pontos(int user_pontos) {
+    public void setUser_pontos(Integer user_pontos) {
         this.user_pontos = user_pontos;
     }
 
