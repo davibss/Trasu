@@ -221,7 +221,6 @@ public class GrupoFragment extends Fragment {
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     Grupo g = obj.getValue(Grupo.class);
                     if (g.getIntegrantes().containsKey(firebaseUser.getUid())){
-                        alert("TEM SIM");
                         cartList.add(g);
                         mAdapter.notifyDataSetChanged();
                     }
