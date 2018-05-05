@@ -251,7 +251,7 @@ public class GrupoFragment extends Fragment {
         }
         itens.add("Ver integrantes");
         //adapter utilizando um layout customizado (TextView)
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
+        final ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
@@ -278,10 +278,16 @@ public class GrupoFragment extends Fragment {
                     mAdapter.removeItem(position);
                 }else if (arg1 == itens.indexOf("Ver integrantes")){
                     // Ver integrantes
-                    Log.d("IDS","IDS DOS INTEGRANTES");
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.visualizar_integrantes, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Ver integrantes");
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    visualizarIntegrantes(alertLayout,grupo);
                     for (Usuario user:grupo.getIntegrantes().values()) {
                         Log.d("ID",user.getUser_id());
-                        alert(user.getUser_id());
                     }
                 }
                 alerta.dismiss();
@@ -289,6 +295,21 @@ public class GrupoFragment extends Fragment {
         });
         alerta = builder.create();
         alerta.show();
+    }
+
+    private void visualizarIntegrantes(View alertLayout,final Grupo grupo) {
+        recyclerViewIntegrante = alertLayout.findViewById(R.id.scrollIntegrantes);
+        cartListIntegrante = new ArrayList<>();
+        mAdapterIntegrante = new CartUserAdapter(getActivity(), cartListIntegrante);
+        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerViewIntegrante.setLayoutManager(mLayoutManagerI);
+        recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewIntegrante.setAdapter(mAdapterIntegrante);
+        recyclerViewIntegrante.setLongClickable(true);
+        for (Usuario user:grupo.getIntegrantes().values()) {
+            cartListIntegrante.add(user);
+            mAdapterIntegrante.notifyDataSetChanged();
+        }
     }
 
     private void gerenciarIntegrantesGrupo(View alertLayout,final Grupo grupo) {

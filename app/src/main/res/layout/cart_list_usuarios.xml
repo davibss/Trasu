@@ -77,7 +77,6 @@
             android:layout_height="30dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/ic_arrow_upward_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.0"
