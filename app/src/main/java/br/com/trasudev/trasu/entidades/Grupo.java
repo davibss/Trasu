@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static br.com.trasudev.trasu.activitys.MainActivity.txtName;
+
 public class Grupo {
     private String grp_id;
     private String grp_nome;
@@ -18,15 +20,17 @@ public class Grupo {
 
     }
 
-    public void cadastrar(DatabaseReference databaseReference, String nome, String user_id){
+    public void cadastrar(DatabaseReference databaseReference, String nome, FirebaseUser user_id){
         this.setGrp_id(UUID.randomUUID().toString());
         this.setGrp_nome(nome);
-        this.setGrp_lider(user_id);
+        this.setGrp_lider(user_id.getUid());
         this.setGrp_integrantes(1);
         HashMap<String,Usuario> hashMap = new HashMap<String, Usuario>();
         Usuario user = new Usuario();
-        user.setUser_id(user_id);
-        hashMap.put(user_id,user);
+        user.setUser_id(user_id.getUid());
+        user.setUser_email(user_id.getEmail());
+        user.setUser_nome(txtName.getText().toString());
+        hashMap.put(user_id.getUid(),user);
         this.setIntegrantes(hashMap);
         databaseReference.child("grupo").child(this.getGrp_id()).setValue(this);
     }

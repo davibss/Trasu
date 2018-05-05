@@ -10,6 +10,7 @@
 
     <!--region Color recyler view-->
     <color name="bg_row_background">#FF5252</color>
+    <color name="bg_row_user_background">#8BC34A</color>
     <color name="item_name">#535353</color>
     <color name="description">#a9a9a9</color>
     <!--endregion-->

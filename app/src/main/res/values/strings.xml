@@ -93,4 +93,15 @@
     <string name="integrantesList">Intengrates: </string>
     <string name="liderList">Líder: </string>
     <!--endregion-->
+
+    <!--region Gerenciar Integrantes-->
+    <string name="lista_usuarios">Usuários</string>
+    <string name="lista_integrantes">Integrantes</string>
+    <!--endregion-->
+
+    <!--region Cart Usuários-->
+    <string name="add_user">Adicionar usuário</string>
+    <string name="nome_list">Nome:</string>
+    <string name="email_list">E-mail:</string>
+    <!--endregion-->
 </resources>

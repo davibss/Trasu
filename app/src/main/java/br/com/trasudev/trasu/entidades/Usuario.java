@@ -68,6 +68,16 @@ public class Usuario {
         });
     }
 
+    public boolean equals (Object o) {
+        if (o != null) {
+            Usuario x = (Usuario) o;
+            if (x.user_id == user_id) return true;
+            return false;
+        }else{
+            return false;
+        }
+    }
+
     public String getUser_id() {
         return user_id;
     }
