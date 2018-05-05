@@ -49,20 +49,20 @@ public class TarefaIndividual {
         this.setTar_id_usuario(idUsuario);
         this.setTar_status(0);
         this.setTar_notificacao(notificacao);
-        databaseReference.child("tarefa_individual").child(this.getTar_id()).setValue(this);
-
+        databaseReference.child("usuario").child(idUsuario).
+                child("tarefa_individual").child(this.getTar_id()).setValue(this);
     }
 
-    public void excluir(DatabaseReference databaseReference, TarefaIndividual tarefa){
-        databaseReference.child("tarefa_individual").
-                child(tarefa.getTar_id())
+    public void excluir(DatabaseReference databaseReference, TarefaIndividual tarefa, FirebaseUser firebaseUser){
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                child("tarefa_individual").child(tarefa.getTar_id())
                 .removeValue();
     }
 
     public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa,
                           FirebaseUser firebaseUser, String pontos){
-        databaseReference.child("tarefa_individual").
-                child(tarefa.getTar_id()).
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                child("tarefa_individual").child(tarefa.getTar_id()).
                 child("tar_status").setValue(1);
         databaseReference.child("usuario").
                 child(firebaseUser.getUid()).
@@ -71,7 +71,7 @@ public class TarefaIndividual {
 
     public void alterar(DatabaseReference databaseReference, TarefaIndividual tarefa,
                         String nome, String descricao, String prioridade, int prazo,
-                        int notificacao){
+                        int notificacao, FirebaseUser firebaseUser){
         tarefa.setTar_nome(nome);
         tarefa.setTar_descricao(descricao);
         tarefa.setTar_prioridade(prioridade);
@@ -87,8 +87,8 @@ public class TarefaIndividual {
         //endregion
         tarefa.setTar_prazo(prazo);
         tarefa.setTar_notificacao(notificacao);
-        databaseReference.child("tarefa_individual").
-                child(tarefa.getTar_id()).
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                child("tarefa_individual").child(tarefa.getTar_id()).
                 setValue(tarefa);
     }
 

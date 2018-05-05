@@ -17,6 +17,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,20 +66,12 @@ import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 public class TarefaFragment extends Fragment implements
         RecyclerItemTouchHelper.RecyclerItemTouchHelperListener{
     private FirebaseUser firebaseUser;
-    private ProgressDialog progressDialog;
-    //private FloatingActionButton floatingActionButton;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     private String checkValue;
     private AlertDialog dialog;
     private AlertDialog alerta;
-    //private ListView listView;
-    private List<TarefaIndividual> listTarefa = new ArrayList<TarefaIndividual>();
-    //private ArrayAdapter<TarefaIndividual> arrayAdapterTarefa;
-    TarefaIndividual tarefaSelecionada;
-    //private ListView listView;
     private FloatingActionButton floatingActionButton;
-
     private RecyclerView recyclerView;
     private List<TarefaIndividual> cartList;
     private CartListAdapter mAdapter;
@@ -97,8 +90,6 @@ public class TarefaFragment extends Fragment implements
     @Override
     public void onStart() {
         super.onStart();
-        firebaseUser = Conexao.getFirebaseUser();
-        verificarUser();
     }
 
     private void initFirebase() {
@@ -151,47 +142,13 @@ public class TarefaFragment extends Fragment implements
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        firebaseUser = Conexao.getFirebaseUser();
+        verificarUser();
         initFirebase();
-    }
-
-    private void eventoDatabase() {
-        databaseReference.child("tarefa_individual").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listTarefa.clear();
-                for (DataSnapshot obj: dataSnapshot.getChildren()){
-                    TarefaIndividual p = obj.getValue(TarefaIndividual.class);
-                    if (p.getTar_id_usuario().equals(firebaseUser.getUid())){
-                        listTarefa.add(p);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void onClickButton() {
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = getLayoutInflater();
-                View alertLayout = inflater.inflate(R.layout.cadastrar_tarefa_layout, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("Cadastrar");
-                alert.setView(alertLayout);
-                dialog = alert.create();
-                dialog.show();
-                inicializarComponentesTarefa(alertLayout);
-            }
-        });
     }
 
     private void inicializarComponentes(View rootView){
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
-        //listView = (ListView) rootView.findViewById(R.id.listView);
     }
 
     private void inicializarComponentesTarefa(View alertLayout) {
@@ -261,7 +218,7 @@ public class TarefaFragment extends Fragment implements
                 new TarefaIndividual().alterar(databaseReference,tarefa,
                         editNome.getText().toString(), editDescricao.getText().toString(),
                         checkValue, Integer.parseInt(editPrazo.getText().toString()),
-                                checkBoxNotificacao.isChecked()?1:0);
+                                checkBoxNotificacao.isChecked()?1:0, firebaseUser);
                 dialog.dismiss();
             }
         });
@@ -291,7 +248,6 @@ public class TarefaFragment extends Fragment implements
         inicializarComponentes(rootView);
         onClickEvent();
         recyclerViewEvent(rootView);
-        //eventoDatabase();
         return rootView;
     }
 
@@ -323,18 +279,15 @@ public class TarefaFragment extends Fragment implements
     }
 
     private void eventoDatabaseCard() {
-        databaseReference.child("tarefa_individual").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                child("tarefa_individual").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //listTarefa.clear();
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     TarefaIndividual p = obj.getValue(TarefaIndividual.class);
-                    if (p.getTar_id_usuario().equals(firebaseUser.getUid())){
-                        //listTarefa.add(p);
-                        cartList.add(p);
-                        mAdapter.notifyDataSetChanged();
-                    }
+                    cartList.add(p);
+                    mAdapter.notifyDataSetChanged();
                 }
             }
             @Override
@@ -356,7 +309,8 @@ public class TarefaFragment extends Fragment implements
             final int deletedIndex = viewHolder.getAdapterPosition();
 
             // remove the item from recycler view
-            new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()));
+            new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()),
+                    firebaseUser);
             mAdapter.removeItem(viewHolder.getAdapterPosition());
         }
     }

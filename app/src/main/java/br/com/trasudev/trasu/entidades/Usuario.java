@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import br.com.trasudev.trasu.activitys.MainActivity;
@@ -27,6 +28,7 @@ public class Usuario {
     private Integer user_pontos;
     private String user_telefone;
     private String user_icon;
+    //private HashMap<String,TarefaIndividual> tarefas;
 
     public Usuario(){
 
