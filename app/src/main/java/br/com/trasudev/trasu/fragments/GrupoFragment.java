@@ -20,12 +20,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +42,7 @@ import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.CartListGroupAdapter;
 import br.com.trasudev.trasu.classes.CartUserAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.CustomItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.entidades.Grupo;
@@ -56,7 +59,7 @@ import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
  * Use the {@link GrupoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GrupoFragment extends Fragment {
+public class GrupoFragment extends Fragment{
 
     private FirebaseUser firebaseUser;
     FirebaseDatabase firebaseDatabase;
@@ -273,6 +276,7 @@ public class GrupoFragment extends Fragment {
                     dialog = alert.create();
                     dialog.show();
                     gerenciarIntegrantesGrupo(alertLayout,grupo);
+                    eventoAddRemove(grupo);
                 }else if (arg1 == itens.indexOf("Excluir")){
                     new Grupo().excluir(databaseReference,grupo);
                     mAdapter.removeItem(position);
@@ -297,6 +301,20 @@ public class GrupoFragment extends Fragment {
         alerta.show();
     }
 
+    private void eventoAddRemove(final Grupo grupo) {
+        databaseReference.child("grupo").child(grupo.getGrp_id()).
+                child("integrantes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                databaseReference.child("grupo").child(grupo.getGrp_id()).
+                        child("grp_integrantes").setValue(dataSnapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) { }
+        });
+    }
+
     private void visualizarIntegrantes(View alertLayout,final Grupo grupo) {
         recyclerViewIntegrante = alertLayout.findViewById(R.id.scrollIntegrantes);
         cartListIntegrante = new ArrayList<>();
@@ -312,7 +330,7 @@ public class GrupoFragment extends Fragment {
         }
     }
 
-    private void gerenciarIntegrantesGrupo(View alertLayout,final Grupo grupo) {
+    private void gerenciarIntegrantesGrupo(View alertLayout, final Grupo grupo) {
         /*
             RECYCLER VIEW DOS INTEGRANTES
          */
@@ -324,27 +342,27 @@ public class GrupoFragment extends Fragment {
                 super.onBindViewHolder(holder, position);
                 final Usuario item = cartListIntegrante.get(position);
                 holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
-                holder.img_move.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Usuario userSelect = new Usuario();
-                        userSelect.setUser_id(item.getUser_id());
-                        userSelect.setUser_nome(item.getUser_nome());
-                        userSelect.setUser_email(item.getUser_email());
-                        eventoDatabaseCardUsuario();
-                        mAdapterIntegrante.removeItem(position);
-                        databaseReference.child("grupo").child(grupo.getGrp_id()).
-                                child("integrantes").child(userSelect.getUser_id()).
-                                removeValue();
-                    }
-                });
             }
         };
         RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerViewIntegrante.setLayoutManager(mLayoutManagerI);
         recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
         recyclerViewIntegrante.setAdapter(mAdapterIntegrante);
-        recyclerViewIntegrante.setLongClickable(true);
+        mAdapterIntegrante.setClickListener(new CustomItemClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                final Usuario item = cartListIntegrante.get(position);
+                Usuario userSelect = new Usuario();
+                userSelect.setUser_id(item.getUser_id());
+                userSelect.setUser_nome(item.getUser_nome());
+                userSelect.setUser_email(item.getUser_email());
+                eventoDatabaseCardUsuario();
+                mAdapterIntegrante.removeItem(position);
+                databaseReference.child("grupo").child(grupo.getGrp_id()).
+                        child("integrantes").child(userSelect.getUser_id()).
+                        removeValue();
+            }
+        });
         eventoDatabaseCardIntegrante(grupo);
         /*
             RECYCLER VIEW DOS USUÁRIOS
@@ -357,28 +375,28 @@ public class GrupoFragment extends Fragment {
                 super.onBindViewHolder(holder, position);
                 final Usuario item = cartListUsuario.get(position);
                 holder.img_move.setImageResource(R.drawable.ic_arrow_downward_black_24dp);
-                holder.img_move.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Usuario userSelect = new Usuario();
-                        userSelect.setUser_id(item.getUser_id());
-                        userSelect.setUser_nome(item.getUser_nome());
-                        userSelect.setUser_email(item.getUser_email());
-                        eventoDatabaseCardIntegrante(grupo);
-                        mAdapterUsuario.removeItem(position);
-                        databaseReference.child("grupo").child(grupo.getGrp_id()).
-                                child("integrantes").child(userSelect.getUser_id()).
-                                setValue(userSelect);
-                        eventoDatabaseCardUsuario();
-                    }
-                });
             }
         };
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerViewUser.setLayoutManager(mLayoutManager);
         recyclerViewUser.setItemAnimator(new DefaultItemAnimator());
         recyclerViewUser.setAdapter(mAdapterUsuario);
-        recyclerViewUser.setLongClickable(true);
+        mAdapterUsuario.setClickListener(new CustomItemClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                final Usuario item = cartListUsuario.get(position);
+                Usuario userSelect = new Usuario();
+                userSelect.setUser_id(item.getUser_id());
+                userSelect.setUser_nome(item.getUser_nome());
+                userSelect.setUser_email(item.getUser_email());
+                eventoDatabaseCardIntegrante(grupo);
+                mAdapterUsuario.removeItem(position);
+                databaseReference.child("grupo").child(grupo.getGrp_id()).
+                        child("integrantes").child(userSelect.getUser_id()).
+                        setValue(userSelect);
+                eventoDatabaseCardUsuario();
+            }
+        });
         eventoDatabaseCardUsuario();
     }
 

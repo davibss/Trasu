@@ -3,6 +3,7 @@ package br.com.trasudev.trasu.classes;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,9 @@ import br.com.trasudev.trasu.entidades.Usuario;
 public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyViewHolder> {
     private Context context;
     private List<Usuario> cartList;
+    private CustomItemClickListener listener;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView name, email;
         public ImageView img_move;
         //public RelativeLayout viewBackground;
@@ -29,8 +31,14 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
             name = view.findViewById(R.id.nome_usuario);
             email = view.findViewById(R.id.email_usuario);
             img_move = view.findViewById(R.id.move_user);
+            img_move.setOnClickListener(this);
             //viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (listener != null) listener.onClick(view, getAdapterPosition());
         }
     }
 
@@ -44,11 +52,8 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cart_list_usuarios, parent, false);
-
         return new MyViewHolder(itemView);
     }
-
-
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
@@ -60,6 +65,10 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
     @Override
     public int getItemCount() {
         return cartList.size();
+    }
+
+    public void setClickListener(CustomItemClickListener itemClickListener) {
+        this.listener = itemClickListener;
     }
 
     public Usuario getItem(int position){
