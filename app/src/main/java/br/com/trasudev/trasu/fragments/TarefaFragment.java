@@ -359,7 +359,7 @@ public class TarefaFragment extends Fragment implements
                     dialog = alert.create();
                     dialog.show();
                     alterarComponentesTarefa(alertLayout, tarefa);
-                }else if ((arg1 == 1)&&tarefa.getTar_status()==0){
+                }else if ((arg1 == 1)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
                             mAdapter.subtrairDatas(tarefa),tarefa, false)+" pontos!")
@@ -374,6 +374,8 @@ public class TarefaFragment extends Fragment implements
                     alert.show();
                 }else if ((arg1 == 1)&&tarefa.getTar_status()==1){
                     alert("Tarefa já finalizada");
+                }else if ((arg1 == 1)&&mAdapter.subtrairDatas(tarefa).equals("0")){
+                    alert("Tarefa expirada");
                 }
                 alerta.dismiss();
             }

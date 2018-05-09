@@ -64,9 +64,14 @@ public class TarefaIndividual {
         databaseReference.child("usuario").child(firebaseUser.getUid()).
                 child("tarefa_individual").child(tarefa.getTar_id()).
                 child("tar_status").setValue(1);
-        databaseReference.child("usuario").
-                child(firebaseUser.getUid()).
-                child("user_pontos").setValue(equacaoPontos(pontos,tarefa,true));
+        if (Integer.parseInt(pontos) != 0){
+            databaseReference.child("usuario").
+                    child(firebaseUser.getUid()).
+                    child("user_pontos").setValue(equacaoPontos(pontos,tarefa,true));
+        }else {
+            //
+        }
+
     }
 
     public void alterar(DatabaseReference databaseReference, TarefaIndividual tarefa,

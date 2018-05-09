@@ -111,6 +111,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         }else if (dataAtual.equals(dataFinal)){
             holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
             holder.prazo.setText("0");
+            holder.dias.setText("Termina hoje");
         }
 
     }
@@ -154,7 +155,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
             return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
         }else if (b.after(a)){
-            return "\uD83D\uDC80";
+            return "0";
         }else{
             return "1";
         }
