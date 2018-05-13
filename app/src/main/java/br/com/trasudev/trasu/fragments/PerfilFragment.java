@@ -204,7 +204,7 @@ public class PerfilFragment extends Fragment {
         btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Enviando...");
+                progressDialog.setMessage("Atualizando...");
                 progressDialog.show();
                 new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
                         telUser,usuarioStatic.getUser_icon(),usuarioStatic);
@@ -218,7 +218,7 @@ public class PerfilFragment extends Fragment {
         btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Enviando...");
+                progressDialog.setMessage("Atualizando...");
                 progressDialog.show();
                 StorageReference filePath = storageReference.child("img_profiles").
                         child("user_icon_"+uri.getLastPathSegment());
