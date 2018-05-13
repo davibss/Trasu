@@ -18,8 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +43,7 @@ import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.Usuario;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static android.app.Activity.RESULT_OK;
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
@@ -154,13 +161,14 @@ public class PerfilFragment extends Fragment {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Glide.with(getActivity()).load(uri)
-                                                .crossFade()
-                                                .fitCenter()
-                                                .centerCrop()
+                                        Glide.with(getActivity())
+                                                .load(uri)
+                                                .transition(DrawableTransitionOptions.withCrossFade())
+                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                .apply(RequestOptions.centerCropTransform())
+                                                .apply(RequestOptions.fitCenterTransform())
+                                                .apply(RequestOptions.bitmapTransform(new CircleTransform()))
                                                 .thumbnail(0.5f)
-                                                .bitmapTransform(new CircleTransform(getActivity()))
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .into(imgUser);
                                         progressBar.setVisibility(ProgressBar.INVISIBLE);
                                     }
@@ -240,15 +248,17 @@ public class PerfilFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
             final Uri uri = data.getData();
-            Glide.with(getActivity()).load(uri)
-                    .crossFade()
-                    .fitCenter()
-                    .centerCrop()
+            Glide.with(getActivity())
+                    .load(uri)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                    .apply(RequestOptions.centerCropTransform())
+                    .apply(RequestOptions.fitCenterTransform())
+                    .apply(RequestOptions.bitmapTransform(new CircleTransform()))
                     .thumbnail(0.5f)
-                    .bitmapTransform(new CircleTransform(getActivity()))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgUser);
             onClickAlterar(uri);
+
         }
     }
 

@@ -36,6 +36,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
@@ -271,9 +273,10 @@ public class MainActivity extends AppCompatActivity implements
         storageReference = FirebaseStorage.getInstance().getReference();
         new Usuario().buscar(databaseReference,firebaseUser,txtWebsite,txtName,txtPontos);
         // loading header background image
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+        Glide.with(MainActivity.this)
+                .load(urlNavHeaderBg)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
                 .into(imgNavHeaderBg);
         // Loading profile image
         loadIconUser();
@@ -298,13 +301,14 @@ public class MainActivity extends AppCompatActivity implements
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Glide.with(MainActivity.this).load(uri)
-                                                        .crossFade()
-                                                        .fitCenter()
-                                                        .centerCrop()
+                                                Glide.with(MainActivity.this)
+                                                        .load(uri)
+                                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                        .apply(RequestOptions.centerCropTransform())
+                                                        .apply(RequestOptions.fitCenterTransform())
+                                                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
                                                         .thumbnail(0.5f)
-                                                        .bitmapTransform(new CircleTransform(MainActivity.this))
-                                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                         .into(imgProfile);
                                                 progressBar.setVisibility(ProgressBar.INVISIBLE);
                                             }
