@@ -133,47 +133,43 @@ public class PerfilFragment extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         storageReference = FirebaseStorage.getInstance().getReference();
         firebaseUser = Conexao.getFirebaseUser();
-        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot obj: dataSnapshot.getChildren()){
-                    final Usuario user = obj.getValue(Usuario.class);
-                    usuarioStatic = user;
-                    if (user.getUser_id().equals(firebaseUser.getUid())){
-                        nomeUser.setText(user.getUser_nome());
-                        DDDUser.setText(user.getUser_telefone().substring(0,3));
-                        telUser.setText(user.getUser_telefone().substring(3,17));
-                        progressBar.setVisibility(View.VISIBLE);
-                        new Thread(new Runnable() {
+                final Usuario user = dataSnapshot.getValue(Usuario.class);
+                usuarioStatic = user;
+                nomeUser.setText(user.getUser_nome());
+                DDDUser.setText(user.getUser_telefone().substring(0,3));
+                telUser.setText(user.getUser_telefone().substring(3,17));
+                progressBar.setVisibility(View.VISIBLE);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        StorageReference filePath = storageReference.child("img_profiles").
+                                child(user.getUser_icon());
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void run() {
-                                StorageReference filePath = storageReference.child("img_profiles").
-                                        child(user.getUser_icon());
-                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            public void onSuccess(final Uri uri) {
+                                getActivity().runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onSuccess(final Uri uri) {
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Glide.with(getActivity()).load(uri)
-                                                        .crossFade()
-                                                        .fitCenter()
-                                                        .centerCrop()
-                                                        .thumbnail(0.5f)
-                                                        .bitmapTransform(new CircleTransform(getActivity()))
-                                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                                        .into(imgUser);
-                                                progressBar.setVisibility(ProgressBar.INVISIBLE);
-                                            }
-                                        });
+                                    public void run() {
+                                        Glide.with(getActivity()).load(uri)
+                                                .crossFade()
+                                                .fitCenter()
+                                                .centerCrop()
+                                                .thumbnail(0.5f)
+                                                .bitmapTransform(new CircleTransform(getActivity()))
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .into(imgUser);
+                                        progressBar.setVisibility(ProgressBar.INVISIBLE);
                                     }
                                 });
                             }
-                        }).start();
+                        });
                     }
-                }
+                }).start();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
