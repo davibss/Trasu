@@ -1,10 +1,19 @@
 package br.com.trasudev.trasu.entidades;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -12,11 +21,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 import br.com.trasudev.trasu.activitys.MainActivity;
+import br.com.trasudev.trasu.classes.CircleTransform;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
@@ -28,6 +39,8 @@ public class Usuario {
     private Integer user_pontos;
     private String user_telefone;
     private String user_icon;
+
+    private Usuario user;
     //private HashMap<String,TarefaIndividual> tarefas;
 
     public Usuario(){
@@ -43,8 +56,28 @@ public class Usuario {
         user.setUser_pontos(0);
         user.setUser_senha(editSenha);
         user.setUser_email(editEmail);
-        user.setUser_icon("imagem");
+        user.setUser_icon("ic_person-web.png");
         databaseReference.child("usuario").child(user.getUser_id()).setValue(user);
+    }
+
+    public Usuario buscarUsuario(final FirebaseUser firebaseUser, DatabaseReference databaseReference){
+        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot obj: dataSnapshot.getChildren()){
+                    final Usuario userSelect = obj.getValue(Usuario.class);
+                    if (userSelect.getUser_id().equals(firebaseUser.getUid())){
+                        user = userSelect;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return null;
     }
 
     public void buscar(DatabaseReference databaseReference, final FirebaseUser firebaseUser,
@@ -53,7 +86,7 @@ public class Usuario {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot obj : dataSnapshot.getChildren()){
-                    Usuario userSelect = obj.getValue(Usuario.class);
+                    final Usuario userSelect = obj.getValue(Usuario.class);
                     if (userSelect.getUser_id().equals(firebaseUser.getUid())){
                         txtName.setText(userSelect.getUser_nome());
                         txtWebsite.setText(userSelect.getUser_email());

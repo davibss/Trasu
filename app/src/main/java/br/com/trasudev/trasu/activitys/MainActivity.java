@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +44,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     GrupoFragment.OnFragmentInteractionListener,
     SettingsFragment.OnFragmentInteractionListener{
     private static FirebaseUser firebaseUser;
+    private static StorageReference storageReference;
     private ProgressDialog progressDialog;
     //private FloatingActionButton floatingActionButton;
     FirebaseDatabase firebaseDatabase;
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView txtWebsite;
     public static  TextView txtName;
     public static TextView txtPontos;
+    private ProgressBar progressBar;
     private Toolbar toolbar;
     //private FloatingActionButton fab;
 
@@ -156,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements
         txtName = (TextView) navHeader.findViewById(R.id.name);
         txtWebsite = (TextView) navHeader.findViewById(R.id.website);
         txtPontos = (TextView) navHeader.findViewById(R.id.pontos_usuario);
+        progressBar = (ProgressBar) navHeader.findViewById(R.id.progressBar);
         imgNavHeaderBg = (ImageView) navHeader.findViewById(R.id.img_header_bg);
         imgProfile = (ImageView) navHeader.findViewById(R.id.img_profile);
 
@@ -261,23 +268,59 @@ public class MainActivity extends AppCompatActivity implements
     private void loadNavHeader() {
         // name, website
         firebaseUser = Conexao.getFirebaseUser();
+        storageReference = FirebaseStorage.getInstance().getReference();
         new Usuario().buscar(databaseReference,firebaseUser,txtWebsite,txtName,txtPontos);
         // loading header background image
         Glide.with(this).load(urlNavHeaderBg)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgNavHeaderBg);
-
         // Loading profile image
-        Glide.with(this).load(urlProfileImg)
-                .crossFade()
-                .thumbnail(0.5f)
-                .bitmapTransform(new CircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProfile);
+        loadIconUser();
+    }
 
-        // showing dot next to notifications label
-        //navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
+    private void loadIconUser() {
+        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot obj : dataSnapshot.getChildren()){
+                    final Usuario userSelect = obj.getValue(Usuario.class);
+                    if (userSelect.getUser_id().equals(firebaseUser.getUid())){
+                        progressBar.setVisibility(View.VISIBLE);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                StorageReference filePath = storageReference.child("img_profiles").
+                                        child(userSelect.getUser_icon());
+                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(final Uri uri) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Glide.with(MainActivity.this).load(uri)
+                                                        .crossFade()
+                                                        .fitCenter()
+                                                        .centerCrop()
+                                                        .thumbnail(0.5f)
+                                                        .bitmapTransform(new CircleTransform(MainActivity.this))
+                                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                        .into(imgProfile);
+                                                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadHomeFragment() {
