@@ -221,14 +221,13 @@ public class PerfilFragment extends Fragment {
                 progressDialog.setMessage("Atualizando...");
                 progressDialog.show();
                 StorageReference filePath = storageReference.child("img_profiles").
-                        child("user_icon_"+uri.getLastPathSegment());
+                        child("user_icon_"+usuarioStatic.getUser_id()+uri.getLastPathSegment());
                 filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         progressDialog.dismiss();
-                        Log.d("TESTACO",usuarioStatic.getUser_nome());
                         new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
-                                telUser,"user_icon_"+uri.getLastPathSegment(),usuarioStatic);
+                                telUser,"user_icon_"+usuarioStatic.getUser_id()+uri.getLastPathSegment(),usuarioStatic);
                         Toast.makeText(getActivity(),"Dados alterados",Toast.LENGTH_SHORT).show();
                     }
                 });
