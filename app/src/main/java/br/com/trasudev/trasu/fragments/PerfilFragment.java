@@ -1,14 +1,45 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import br.com.trasudev.trasu.R;
+import br.com.trasudev.trasu.activitys.MainActivity;
+import br.com.trasudev.trasu.classes.CircleTransform;
+import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.Usuario;
+
+import static android.app.Activity.RESULT_OK;
+import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,8 +50,21 @@ import br.com.trasudev.trasu.R;
  * create an instance of this fragment.
  */
 public class PerfilFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private FirebaseUser firebaseUser;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    private StorageReference storageReference;
+
+    private ImageView imgUser;
+    private EditText nomeUser,DDDUser,telUser;
+    private Button btnAlterar;
+    private ProgressDialog progressDialog;
+    private ProgressBar progressBar;
+
+    private static Usuario usuarioStatic;
+
+    private static final int GALERY_INTENT = 2;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -34,15 +78,30 @@ public class PerfilFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PerfilFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    private void initFirebase() {
+        FirebaseApp.initializeApp(getContext());
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (!calledAlready) {
+            firebaseDatabase.setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+        databaseReference = firebaseDatabase.getReference();
+    }
+
+    private void verificarUser() {
+        if (firebaseUser == null){
+            throw new RuntimeException(getContext().toString()
+                    + " must implement OnFragmentInteractionListener");
+        }else{
+            //
+        }
+    }
+
     public static PerfilFragment newInstance(String param1, String param2) {
         PerfilFragment fragment = new PerfilFragment();
         Bundle args = new Bundle();
@@ -59,16 +118,145 @@ public class PerfilFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        firebaseUser = Conexao.getFirebaseUser();
+        verificarUser();
+        initFirebase();
+    }
+
+    private void inicializarComponentes(View rootView){
+        imgUser = (ImageView) rootView.findViewById(R.id.img_user);
+        nomeUser = (EditText) rootView.findViewById(R.id.editText_nome);
+        DDDUser = (EditText) rootView.findViewById(R.id.editText_DDD);
+        telUser = (EditText) rootView.findViewById(R.id.editText_telefone);
+        btnAlterar = (Button) rootView.findViewById(R.id.btnAlterar);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressDialog = new ProgressDialog(getActivity());
+        storageReference = FirebaseStorage.getInstance().getReference();
+        firebaseUser = Conexao.getFirebaseUser();
+        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot obj: dataSnapshot.getChildren()){
+                    final Usuario user = obj.getValue(Usuario.class);
+                    usuarioStatic = user;
+                    if (user.getUser_id().equals(firebaseUser.getUid())){
+                        nomeUser.setText(user.getUser_nome());
+                        DDDUser.setText(user.getUser_telefone().substring(0,3));
+                        telUser.setText(user.getUser_telefone().substring(3,17));
+                        progressBar.setVisibility(View.VISIBLE);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                StorageReference filePath = storageReference.child("img_profiles").
+                                        child(user.getUser_icon());
+                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(final Uri uri) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Glide.with(getActivity()).load(uri)
+                                                        .crossFade()
+                                                        .fitCenter()
+                                                        .centerCrop()
+                                                        .thumbnail(0.5f)
+                                                        .bitmapTransform(new CircleTransform(getActivity()))
+                                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                        .into(imgUser);
+                                                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_perfil, container,false);
+        inicializarComponentes(rootView);
+        onClickEvent();
+        onClickAlterarDados();
+        return rootView;
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    private void onClickEvent() {
+        imgUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent,GALERY_INTENT);
+            }
+        });
+    }
+
+    private void onClickAlterarDados(){
+        btnAlterar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.setMessage("Enviando...");
+                progressDialog.show();
+                new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
+                        telUser,usuarioStatic.getUser_icon(),usuarioStatic);
+                progressDialog.dismiss();
+                Toast.makeText(getActivity(),"Dados alterados",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void onClickAlterar(final Uri uri){
+        btnAlterar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.setMessage("Enviando...");
+                progressDialog.show();
+                StorageReference filePath = storageReference.child("img_profiles").
+                        child("user_icon_"+uri.getLastPathSegment());
+                filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        progressDialog.dismiss();
+                        Log.d("TESTACO",usuarioStatic.getUser_nome());
+                        new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
+                                telUser,"user_icon_"+uri.getLastPathSegment(),usuarioStatic);
+                        Toast.makeText(getActivity(),"Dados alterados",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
+            final Uri uri = data.getData();
+            Glide.with(getActivity()).load(uri)
+                    .crossFade()
+                    .fitCenter()
+                    .centerCrop()
+                    .thumbnail(0.5f)
+                    .bitmapTransform(new CircleTransform(getActivity()))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgUser);
+            onClickAlterar(uri);
+        }
+    }
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -92,16 +280,6 @@ public class PerfilFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

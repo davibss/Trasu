@@ -60,24 +60,12 @@ public class Usuario {
         databaseReference.child("usuario").child(user.getUser_id()).setValue(user);
     }
 
-    public Usuario buscarUsuario(final FirebaseUser firebaseUser, DatabaseReference databaseReference){
-        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot obj: dataSnapshot.getChildren()){
-                    final Usuario userSelect = obj.getValue(Usuario.class);
-                    if (userSelect.getUser_id().equals(firebaseUser.getUid())){
-                        user = userSelect;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return null;
+    public void alterar(DatabaseReference databaseReference, FirebaseUser firebaseUser,
+                        EditText nome, EditText ddd, EditText tel, String imagem, Usuario user){
+        user.setUser_nome(nome.getText().toString());
+        user.setUser_telefone(ddd.getText().toString()+tel.getText().toString());
+        user.setUser_icon(imagem);
+        databaseReference.child("usuario").child(firebaseUser.getUid()).setValue(user);
     }
 
     public void buscar(DatabaseReference databaseReference, final FirebaseUser firebaseUser,
