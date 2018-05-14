@@ -87,6 +87,8 @@ public class TarefaFragment extends Fragment implements
     private String mParam1;
     private String mParam2;
 
+    private Context context;
+
     @Override
     public void onStart() {
         super.onStart();

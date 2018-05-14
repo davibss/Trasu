@@ -165,7 +165,7 @@ public class PerfilFragment extends Fragment {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Glide.with(context)
+                                        Glide.with(context.getApplicationContext())
                                                 .load(uri)
                                                 .transition(DrawableTransitionOptions.withCrossFade())
                                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
