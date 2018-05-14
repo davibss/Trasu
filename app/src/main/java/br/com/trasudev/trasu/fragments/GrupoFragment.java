@@ -1,5 +1,6 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,10 +22,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +50,7 @@ import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.CartListGroupAdapter;
 import br.com.trasudev.trasu.classes.CartUserAdapter;
+import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.classes.CustomItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
@@ -64,6 +74,7 @@ public class GrupoFragment extends Fragment{
     private FirebaseUser firebaseUser;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    StorageReference storageReference;
     private FloatingActionButton floatingActionButton;
     private AlertDialog dialog;
     private AlertDialog alerta;
@@ -90,6 +101,7 @@ public class GrupoFragment extends Fragment{
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Context context;
 
     public GrupoFragment() {
         // Required empty public constructor
@@ -205,10 +217,10 @@ public class GrupoFragment extends Fragment{
                             Usuario user = obj.getValue(Usuario.class);
                             if (user.getUser_id().equals(item.getGrp_lider())){
                                 holder.lider.setText(String.valueOf("Líder: " + user.getUser_nome()));
+                                setImageLider(user, holder.img_lider);
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -216,12 +228,44 @@ public class GrupoFragment extends Fragment{
                 });
             }
         };
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context.getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLongClickable(true);
         eventoDatabaseCard();
+    }
+
+    private void setImageLider(final Usuario user, final ImageView imgLider) {
+        storageReference = FirebaseStorage.getInstance().getReference();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StorageReference filePath = storageReference.child("img_profiles").
+                        child(user.getUser_icon());
+                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(final Uri uri) {
+                        Activity activity = (Activity) context;
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(context)
+                                        .load(uri)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                        .apply(RequestOptions.centerCropTransform())
+                                        .apply(RequestOptions.fitCenterTransform())
+                                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
+                                        .thumbnail(0.5f)
+                                        .into(imgLider);
+                                //progressBar.setVisibility(ProgressBar.INVISIBLE);
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
     }
 
     private void eventoDatabaseCard() {
@@ -254,7 +298,7 @@ public class GrupoFragment extends Fragment{
         }
         itens.add("Ver integrantes");
         //adapter utilizando um layout customizado (TextView)
-        final ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
+        final ArrayAdapter adapter = new ArrayAdapter(context, R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
@@ -319,7 +363,7 @@ public class GrupoFragment extends Fragment{
         recyclerViewIntegrante = alertLayout.findViewById(R.id.scrollIntegrantes);
         cartListIntegrante = new ArrayList<>();
         mAdapterIntegrante = new CartUserAdapter(getActivity(), cartListIntegrante);
-        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(context.getApplicationContext());
         recyclerViewIntegrante.setLayoutManager(mLayoutManagerI);
         recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
         recyclerViewIntegrante.setAdapter(mAdapterIntegrante);
@@ -344,7 +388,7 @@ public class GrupoFragment extends Fragment{
                 holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
             }
         };
-        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(getActivity().getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(context.getApplicationContext());
         recyclerViewIntegrante.setLayoutManager(mLayoutManagerI);
         recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
         recyclerViewIntegrante.setAdapter(mAdapterIntegrante);
@@ -478,6 +522,7 @@ public class GrupoFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

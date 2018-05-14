@@ -1,5 +1,6 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,7 @@ import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -80,6 +82,7 @@ public class PerfilFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Context context;
 
     public PerfilFragment() {
         // Required empty public constructor
@@ -158,10 +161,11 @@ public class PerfilFragment extends Fragment {
                         filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(final Uri uri) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                Activity activity = (Activity) context;
+                                activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Glide.with(getActivity())
+                                        Glide.with(context)
                                                 .load(uri)
                                                 .transition(DrawableTransitionOptions.withCrossFade())
                                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
@@ -217,7 +221,7 @@ public class PerfilFragment extends Fragment {
                 new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
                         telUser,usuarioStatic.getUser_icon(),usuarioStatic);
                 progressDialog.dismiss();
-                Toast.makeText(getActivity(),"Dados alterados",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Dados alterados",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -236,7 +240,7 @@ public class PerfilFragment extends Fragment {
                         progressDialog.dismiss();
                         new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
                                 telUser,"user_icon_"+usuarioStatic.getUser_id()+uri.getLastPathSegment(),usuarioStatic);
-                        Toast.makeText(getActivity(),"Dados alterados",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Dados alterados",Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -248,7 +252,7 @@ public class PerfilFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
             final Uri uri = data.getData();
-            Glide.with(getActivity())
+            Glide.with(context)
                     .load(uri)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
@@ -271,6 +275,7 @@ public class PerfilFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {

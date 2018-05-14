@@ -41,7 +41,7 @@ public class Usuario {
     private String user_icon;
 
     private Usuario user;
-    //private HashMap<String,TarefaIndividual> tarefas;
+    private HashMap<String,TarefaIndividual> tarefa_individual;
 
     public Usuario(){
 
@@ -70,18 +70,15 @@ public class Usuario {
 
     public void buscar(DatabaseReference databaseReference, final FirebaseUser firebaseUser,
                        final TextView txtWebsite, final TextView txtName, final TextView txtPontos){
-        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("usuario").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot obj : dataSnapshot.getChildren()){
-                    final Usuario userSelect = obj.getValue(Usuario.class);
-                    if (userSelect.getUser_id().equals(firebaseUser.getUid())){
-                        txtName.setText(userSelect.getUser_nome());
-                        txtWebsite.setText(userSelect.getUser_email());
-                        txtPontos.setText("Pontos: " + String.valueOf(userSelect.getUser_pontos()));
-                    }
-                }
+                final Usuario userSelect = dataSnapshot.getValue(Usuario.class);
+                txtName.setText(userSelect.getUser_nome());
+                txtWebsite.setText(userSelect.getUser_email());
+                txtPontos.setText("Pontos: " + String.valueOf(userSelect.getUser_pontos()));
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -155,4 +152,11 @@ public class Usuario {
         this.user_icon = user_icon;
     }
 
+    public HashMap<String, TarefaIndividual> getTarefa_individual() {
+        return tarefa_individual;
+    }
+
+    public void setTarefa_individual(HashMap<String, TarefaIndividual> tarefa_individual) {
+        this.tarefa_individual = tarefa_individual;
+    }
 }

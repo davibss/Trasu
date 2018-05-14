@@ -283,43 +283,39 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void loadIconUser() {
-        databaseReference.child("usuario").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("usuario").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot obj : dataSnapshot.getChildren()){
-                    final Usuario userSelect = obj.getValue(Usuario.class);
-                    if (userSelect.getUser_id().equals(firebaseUser.getUid())){
-                        progressBar.setVisibility(View.VISIBLE);
-                        new Thread(new Runnable() {
+                final Usuario userSelect = dataSnapshot.getValue(Usuario.class);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        StorageReference filePath = storageReference.child("img_profiles").
+                                child(userSelect.getUser_icon());
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void run() {
-                                StorageReference filePath = storageReference.child("img_profiles").
-                                        child(userSelect.getUser_icon());
-                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            public void onSuccess(final Uri uri) {
+                                runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onSuccess(final Uri uri) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Glide.with(MainActivity.this)
-                                                        .load(uri)
-                                                        .transition(DrawableTransitionOptions.withCrossFade())
-                                                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
-                                                        .apply(RequestOptions.centerCropTransform())
-                                                        .apply(RequestOptions.fitCenterTransform())
-                                                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
-                                                        .thumbnail(0.5f)
-                                                        .into(imgProfile);
-                                                progressBar.setVisibility(ProgressBar.INVISIBLE);
-                                            }
-                                        });
+                                    public void run() {
+                                        Glide.with(getBaseContext())
+                                                .load(uri)
+                                                .transition(DrawableTransitionOptions.withCrossFade())
+                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                .apply(RequestOptions.centerCropTransform())
+                                                .apply(RequestOptions.fitCenterTransform())
+                                                .apply(RequestOptions.bitmapTransform(new CircleTransform()))
+                                                .thumbnail(0.5f)
+                                                .into(imgProfile);
+                                        progressBar.setVisibility(ProgressBar.INVISIBLE);
                                     }
                                 });
                             }
-                        }).start();
+                        });
                     }
-                }
+                }).start();
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
