@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import br.com.trasudev.trasu.R;
@@ -22,7 +23,8 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView name, email;
-        public ImageView img_move;
+        public ImageView img_move,img_integrante;
+        public ProgressBar progressBar;
         //public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
 
@@ -31,6 +33,8 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
             name = view.findViewById(R.id.nome_usuario);
             email = view.findViewById(R.id.email_usuario);
             img_move = view.findViewById(R.id.move_user);
+            img_integrante = view.findViewById(R.id.img_group);
+            progressBar = view.findViewById(R.id.progressBar);
             img_move.setOnClickListener(this);
             //viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);

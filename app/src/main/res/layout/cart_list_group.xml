@@ -106,6 +106,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/img_lider"
+            app:layout_constraintTop_toTopOf="@id/img_lider"
+            app:layout_constraintLeft_toLeftOf="@id/img_lider"
+            app:layout_constraintRight_toRightOf="@id/img_lider"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
         <TextView
             android:id="@+id/lider_group"
             android:layout_width="wrap_content"

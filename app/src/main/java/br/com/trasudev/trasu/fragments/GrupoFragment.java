@@ -217,7 +217,7 @@ public class GrupoFragment extends Fragment{
                             Usuario user = obj.getValue(Usuario.class);
                             if (user.getUser_id().equals(item.getGrp_lider())){
                                 holder.lider.setText(String.valueOf("Líder: " + user.getUser_nome()));
-                                setImageLider(user, holder.img_lider);
+                                setImageLider(user, holder.img_lider,holder.progressBar);
                             }
                         }
                     }
@@ -236,7 +236,8 @@ public class GrupoFragment extends Fragment{
         eventoDatabaseCard();
     }
 
-    private void setImageLider(final Usuario user, final ImageView imgLider) {
+    private void setImageLider(final Usuario user, final ImageView imgLider,final ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
         storageReference = FirebaseStorage.getInstance().getReference();
         new Thread(new Runnable() {
             @Override
@@ -250,7 +251,7 @@ public class GrupoFragment extends Fragment{
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Glide.with(context)
+                                Glide.with(context.getApplicationContext())
                                         .load(uri)
                                         .transition(DrawableTransitionOptions.withCrossFade())
                                         .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
@@ -259,7 +260,7 @@ public class GrupoFragment extends Fragment{
                                         .apply(RequestOptions.bitmapTransform(new CircleTransform()))
                                         .thumbnail(0.5f)
                                         .into(imgLider);
-                                //progressBar.setVisibility(ProgressBar.INVISIBLE);
+                                progressBar.setVisibility(ProgressBar.INVISIBLE);
                             }
                         });
                     }
@@ -334,9 +335,6 @@ public class GrupoFragment extends Fragment{
                     dialog = alert.create();
                     dialog.show();
                     visualizarIntegrantes(alertLayout,grupo);
-                    for (Usuario user:grupo.getIntegrantes().values()) {
-                        Log.d("ID",user.getUser_id());
-                    }
                 }
                 alerta.dismiss();
             }
@@ -362,7 +360,14 @@ public class GrupoFragment extends Fragment{
     private void visualizarIntegrantes(View alertLayout,final Grupo grupo) {
         recyclerViewIntegrante = alertLayout.findViewById(R.id.scrollIntegrantes);
         cartListIntegrante = new ArrayList<>();
-        mAdapterIntegrante = new CartUserAdapter(getActivity(), cartListIntegrante);
+        mAdapterIntegrante = new CartUserAdapter(getActivity(), cartListIntegrante){
+            @Override
+            public void onBindViewHolder(final MyViewHolder holder, int position) {
+                super.onBindViewHolder(holder, position);
+                final Usuario item = cartListIntegrante.get(position);
+                mostrarIconeUsuarios(holder,item);
+            }
+        };
         RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(context.getApplicationContext());
         recyclerViewIntegrante.setLayoutManager(mLayoutManagerI);
         recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
@@ -372,6 +377,51 @@ public class GrupoFragment extends Fragment{
             cartListIntegrante.add(user);
             mAdapterIntegrante.notifyDataSetChanged();
         }
+    }
+
+    private void mostrarIconeUsuarios(final CartUserAdapter.MyViewHolder holder,final Usuario item){
+        databaseReference.child("usuario").child(item.getUser_id()).
+                addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Usuario user = dataSnapshot.getValue(Usuario.class);
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                        storageReference = FirebaseStorage.getInstance().getReference();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                StorageReference filePath = storageReference.child("img_profiles").
+                                        child(user.getUser_icon());
+                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(final Uri uri) {
+                                        Activity activity = (Activity) context;
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Glide.with(context.getApplicationContext())
+                                                        .load(uri)
+                                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                        .apply(RequestOptions.centerCropTransform())
+                                                        .apply(RequestOptions.fitCenterTransform())
+                                                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
+                                                        .thumbnail(0.5f)
+                                                        .into(holder.img_integrante);
+                                                holder.progressBar.setVisibility(ProgressBar.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void gerenciarIntegrantesGrupo(View alertLayout, final Grupo grupo) {
@@ -386,6 +436,7 @@ public class GrupoFragment extends Fragment{
                 super.onBindViewHolder(holder, position);
                 final Usuario item = cartListIntegrante.get(position);
                 holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
+                mostrarIconeUsuarios(holder,item);
             }
         };
         RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(context.getApplicationContext());
@@ -419,6 +470,7 @@ public class GrupoFragment extends Fragment{
                 super.onBindViewHolder(holder, position);
                 final Usuario item = cartListUsuario.get(position);
                 holder.img_move.setImageResource(R.drawable.ic_arrow_downward_black_24dp);
+                mostrarIconeUsuarios(holder,item);
             }
         };
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());

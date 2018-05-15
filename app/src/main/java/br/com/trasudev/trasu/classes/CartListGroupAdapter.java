@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import br.com.trasudev.trasu.R;
@@ -40,12 +41,14 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, integrantes, lider;
         public ImageView img_group,img_lider,menu_grupo;
+        public ProgressBar progressBar;
         public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
 
         public MyViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.nome_group);
+            progressBar = view.findViewById(R.id.progressBar);
             integrantes = view.findViewById(R.id.integrantes_group);
             lider = view.findViewById(R.id.lider_group);
             img_group = view.findViewById(R.id.img_group);
