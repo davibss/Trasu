@@ -2,6 +2,7 @@ package br.com.trasudev.trasu.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,6 +40,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
@@ -252,18 +258,39 @@ public class PerfilFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
             final Uri uri = data.getData();
-            Glide.with(context)
-                    .load(uri)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
-                    .apply(RequestOptions.centerCropTransform())
-                    .apply(RequestOptions.fitCenterTransform())
-                    .apply(RequestOptions.bitmapTransform(new CircleTransform()))
-                    .thumbnail(0.5f)
-                    .into(imgUser);
-            onClickAlterar(uri);
+            if (!getMimeType(context,uri).equals("gif")){
+                Glide.with(context)
+                        .load(uri)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                        .apply(RequestOptions.centerCropTransform())
+                        .apply(RequestOptions.fitCenterTransform())
+                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
+                        .thumbnail(0.5f)
+                        .into(imgUser);
+                onClickAlterar(uri);
+            }else{
+                Toast.makeText(context,"Formato não suportado",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public static String getMimeType(Context context, Uri uri) {
+        String extension;
+
+        //Check uri format to avoid null
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            //If scheme is a content
+            final MimeTypeMap mime = MimeTypeMap.getSingleton();
+            extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
+        } else {
+            //If scheme is a File
+            //This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
+            extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
 
         }
+
+        return extension;
     }
 
     public void onButtonPressed(Uri uri) {
