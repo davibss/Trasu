@@ -152,8 +152,8 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             e.printStackTrace();
         }
         if (b.before(a)){
-            a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_MONTH));
-            return String.valueOf(a.get(Calendar.DAY_OF_MONTH));
+            a.add(Calendar.DATE, - b.get(Calendar.DAY_OF_YEAR));
+            return String.valueOf(a.get(Calendar.DAY_OF_YEAR));
         }else if (b.after(a)){
             return "0";
         }else{

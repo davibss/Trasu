@@ -108,11 +108,13 @@ public class TarefaIndividual {
         }
         String[] oldPoint = txtPontos.getText().toString().split("Pontos: ");
         if (Double.parseDouble(pontos) != 0){
+            int equacao = (int)Math.ceil((Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
             if (soma){
-                return (int)Math.ceil(Double.parseDouble(oldPoint[1].trim())+
+                int equacaoFinal = (int)Math.ceil(Double.parseDouble(oldPoint[1].trim())+
                         (Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+                return equacao>=50?(int)Double.parseDouble(oldPoint[1].trim())+50:equacaoFinal;
             }else {
-                return (int)Math.ceil((Math.pow(Double.parseDouble(pontos),prioridade))/prioridade);
+                return equacao>=50?50:equacao;
             }
         }else{
             return 0;

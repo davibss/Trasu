@@ -261,10 +261,23 @@ public class TarefaFragment extends Fragment implements
             @Override
             public void onBindViewHolder(MyViewHolder holder,final int position) {
                 super.onBindViewHolder(holder, position);
+                holder.viewForeground.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LayoutInflater inflateDialog = getLayoutInflater();
+                        View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setTitle("Visualizar/alterar tarefa");
+                        alert.setView(alertLayout);
+                        dialog = alert.create();
+                        dialog.show();
+                        alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                    }
+                });
                 holder.menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        list_opcoes(mAdapter.getItem(position));
+                        list_opcoes(mAdapter.getItem(position),position);
                     }
                 });
             }
@@ -288,8 +301,10 @@ public class TarefaFragment extends Fragment implements
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     TarefaIndividual p = obj.getValue(TarefaIndividual.class);
-                    cartList.add(p);
-                    mAdapter.notifyDataSetChanged();
+                    if (p.getTar_status()==0) {
+                        cartList.add(p);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             }
             @Override
@@ -301,7 +316,7 @@ public class TarefaFragment extends Fragment implements
 
 
     @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -310,10 +325,19 @@ public class TarefaFragment extends Fragment implements
             final TarefaIndividual deletedItem = cartList.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
 
-            // remove the item from recycler view
-            new TarefaIndividual().excluir(databaseReference,cartList.get(viewHolder.getAdapterPosition()),
-                    firebaseUser);
-            mAdapter.removeItem(viewHolder.getAdapterPosition());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
+                    mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
+                    cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            new TarefaIndividual().finalizar(databaseReference, cartList.get(viewHolder.getAdapterPosition()),
+                                    firebaseUser, mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())));
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
@@ -343,40 +367,21 @@ public class TarefaFragment extends Fragment implements
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
-    public void list_opcoes(final TarefaIndividual tarefa){
+    public void list_opcoes(final TarefaIndividual tarefa, final int position){
         ArrayList<String> itens = new ArrayList<String>();
-        itens.add("   Visualizar/Alterar");
-        itens.add("   Finalizar");
+        itens.add("   Excluir");
         //adapter utilizando um layout customizado (TextView)
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                if (arg1 == 0){
-                    LayoutInflater inflateDialog = getLayoutInflater();
-                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Visualizar/alterar tarefa");
-                    alert.setView(alertLayout);
-                    dialog = alert.create();
-                    dialog.show();
-                    alterarComponentesTarefa(alertLayout, tarefa);
-                }else if ((arg1 == 1)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
-                            mAdapter.subtrairDatas(tarefa),tarefa, false)+" pontos!")
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    new TarefaIndividual().finalizar(databaseReference, tarefa, firebaseUser,
-                                    mAdapter.subtrairDatas(tarefa));
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }else if ((arg1 == 1)&&tarefa.getTar_status()==1){
+                if ((arg1 == 0)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
+                    new TarefaIndividual().excluir(databaseReference,tarefa,
+                            firebaseUser);
+                    mAdapter.removeItem(position);
+                }else if ((arg1 == 0)&&tarefa.getTar_status()==1){
                     alert("Tarefa já finalizada");
-                }else if ((arg1 == 1)&&mAdapter.subtrairDatas(tarefa).equals("0")){
+                }else if ((arg1 == 0)&&mAdapter.subtrairDatas(tarefa).equals("0")){
                     alert("Tarefa expirada");
                 }
                 alerta.dismiss();

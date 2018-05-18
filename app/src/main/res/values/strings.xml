@@ -84,7 +84,7 @@
     <string name="dias_tarefa">Dias restantes</string>
     <!--endregion-->
 
-    <string name="delete">Excluir</string>
+    <string name="delete">Finalizar</string>
 
     <!--region Grupos-->
     <string name="grpNome">Nome do grupo</string>
