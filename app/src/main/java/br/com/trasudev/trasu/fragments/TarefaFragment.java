@@ -93,6 +93,7 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onStart() {
+        Log.d("LOG","STARTOU");
         super.onStart();
     }
 
@@ -347,9 +348,9 @@ public class TarefaFragment extends Fragment implements
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
+        /*if (mListener != null) {
             mListener.onFragmentInteraction(uri);
-        }
+        }*/
     }
 
     @Override
@@ -362,6 +363,8 @@ public class TarefaFragment extends Fragment implements
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+
 
     private void alert(String msg) {
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();

@@ -57,6 +57,7 @@ import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
+import br.com.trasudev.trasu.fragments.HomeFragmentTab;
 import br.com.trasudev.trasu.fragments.TarefaFragment;
 import br.com.trasudev.trasu.fragments.ContatoFragment;
 import br.com.trasudev.trasu.fragments.PerfilFragment;
@@ -70,19 +71,13 @@ public class MainActivity extends AppCompatActivity implements
     ContatoFragment.OnFragmentInteractionListener,
     PerfilFragment.OnFragmentInteractionListener,
     GrupoFragment.OnFragmentInteractionListener,
+    HomeFragmentTab.OnFragmentInteractionListener,
     SettingsFragment.OnFragmentInteractionListener{
     private static FirebaseUser firebaseUser;
     private static StorageReference storageReference;
     private ProgressDialog progressDialog;
-    //private FloatingActionButton floatingActionButton;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    private String checkValue;
-    private AlertDialog dialog;
-    //private ListView listView;
-    private List<TarefaIndividual> listTarefa = new ArrayList<TarefaIndividual>();
-    private ArrayAdapter<TarefaIndividual> arrayAdapterTarefa;
-    TarefaIndividual tarefaSelecionada;
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -93,15 +88,8 @@ public class MainActivity extends AppCompatActivity implements
     public static TextView txtPontos;
     private ProgressBar progressBar;
     private Toolbar toolbar;
-    //private FloatingActionButton fab;
-
-    // urls to load navigation header background image
-    // and profile image
-    //private static final String urlNavHeaderBg = "https://superdevresources.com/wp-content/uploads/2016/02/5-backgrounds.jpg";
     private static final String urlNavHeaderBg =
             "https://i.imgur.com/SGhvkjv.jpg";
-    private static final String urlProfileImg =
-            "https://pbs.twimg.com/profile_images/971692658551767040/7tmgsXu4_400x400.jpg";
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
@@ -180,33 +168,6 @@ public class MainActivity extends AppCompatActivity implements
             CURRENT_TAG = TAG_TAREFA;
             loadHomeFragment();
         }
-    }
-
-    private void inicializarComponentesTarefa(View alertLayout) {
-        final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
-        final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
-        final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
-        final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
-        final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
-        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
-        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton button = (RadioButton) group.findViewById(i);
-                checkValue = button.getText().toString();
-            }
-        });
-        btnCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
-                        editDescricao.getText().toString(),checkValue,
-                        Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
-                        checkBoxNotificacao.isChecked()?1:0);
-                dialog.dismiss();
-
-            }
-        });
     }
 
     @Override
@@ -376,8 +337,10 @@ public class MainActivity extends AppCompatActivity implements
         switch (navItemIndex) {
             case 0:
                 // home
-                TarefaFragment tarefaFragment = new TarefaFragment();
-                return tarefaFragment;
+                /*TarefaFragment tarefaFragment = new TarefaFragment();
+                return tarefaFragment;*/
+                HomeFragmentTab homeFragmentTab = new HomeFragmentTab();
+                return homeFragmentTab;
             case 1:
                 // photos
                 GrupoFragment grupoFragment = new GrupoFragment();
@@ -390,13 +353,12 @@ public class MainActivity extends AppCompatActivity implements
                 // notifications fragment
                 PerfilFragment perfilFragment = new PerfilFragment();
                 return perfilFragment;
-
             case 4:
                 // settings fragment
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
             default:
-                return new TarefaFragment();
+                return new HomeFragmentTab();
         }
     }
 
@@ -512,13 +474,6 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onBackPressed();
     }
-
-    /*private void toggleFab() {
-        if (navItemIndex == 0)
-            fab.show();
-        else
-            fab.hide();
-    }*/
 
     @Override
     public void onFragmentInteraction(Uri uri){
