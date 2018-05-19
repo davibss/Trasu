@@ -50,7 +50,6 @@ import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
-import br.com.trasudev.trasu.classes.OrdenaPorNome;
 import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.classes.TarefaAdapter;
