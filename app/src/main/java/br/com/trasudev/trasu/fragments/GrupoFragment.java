@@ -204,6 +204,21 @@ public class GrupoFragment extends Fragment{
             public void onBindViewHolder(final MyViewHolder holder,final int position) {
                 super.onBindViewHolder(holder, position);
                 final Grupo item = cartList.get(position);
+                if (item.getGrp_lider().equals(firebaseUser.getUid())){
+                    holder.viewForeground.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LayoutInflater inflateDialog = getLayoutInflater();
+                            View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
+                            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                            alert.setTitle("Visualizar/alterar grupo");
+                            alert.setView(alertLayout);
+                            dialog = alert.create();
+                            dialog.show();
+                            alterarComponentesGrupo(alertLayout, mAdapter.getItem(position));
+                        }
+                    });
+                }
                 holder.menu_grupo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -293,7 +308,7 @@ public class GrupoFragment extends Fragment{
     public void list_opcoes(final Grupo grupo, final int position){
         final ArrayList<String> itens = new ArrayList<String>();
         if (firebaseUser.getUid().equals(grupo.getGrp_lider())){
-            itens.add("Visualizar/Alterar");
+            //itens.add("Visualizar/Alterar");
             itens.add("Gerenciar integrantes");
             itens.add("Excluir");
         }
@@ -304,14 +319,14 @@ public class GrupoFragment extends Fragment{
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 if (arg1 == itens.indexOf("Visualizar/Alterar")){
-                    LayoutInflater inflateDialog = getLayoutInflater();
+                    /*LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setTitle("Visualizar/alterar grupo");
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
-                    alterarComponentesGrupo(alertLayout, grupo);
+                    alterarComponentesGrupo(alertLayout, grupo);*/
                 }else if (arg1 == itens.indexOf("Gerenciar integrantes")) {
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_integrantes, null);
