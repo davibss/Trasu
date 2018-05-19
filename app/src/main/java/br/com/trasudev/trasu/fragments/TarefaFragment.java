@@ -42,12 +42,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.OrdenaPorNome;
 import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.classes.TarefaAdapter;
@@ -257,9 +260,9 @@ public class TarefaFragment extends Fragment implements
         recyclerView = rootView.findViewById(R.id.recycler_view);
         coordinatorLayout = rootView.findViewById(R.id.coordinator_layout);
         cartList = new ArrayList<>();
-        mAdapter = new CartListAdapter(getActivity(), cartList){
+        mAdapter = new CartListAdapter(getActivity(), cartList) {
             @Override
-            public void onBindViewHolder(MyViewHolder holder,final int position) {
+            public void onBindViewHolder(MyViewHolder holder, final int position) {
                 super.onBindViewHolder(holder, position);
                 holder.viewForeground.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -272,16 +275,13 @@ public class TarefaFragment extends Fragment implements
                         dialog = alert.create();
                         dialog.show();
                         alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
-                    }
-                });
+                        }});
                 holder.menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        list_opcoes(mAdapter.getItem(position),position);
-                    }
-                });
-            }
-        };
+                        list_opcoes(mAdapter.getItem(position), position);
+                        }});
+                }};
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -295,7 +295,8 @@ public class TarefaFragment extends Fragment implements
 
     private void eventoDatabaseCard() {
         databaseReference.child("usuario").child(firebaseUser.getUid()).
-                child("tarefa_individual").addValueEventListener(new ValueEventListener() {
+                child("tarefa_individual").orderByChild("tar_prazo").
+                addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 cartList.clear();

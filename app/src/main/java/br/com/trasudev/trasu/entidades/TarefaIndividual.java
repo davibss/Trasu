@@ -134,6 +134,8 @@ public class TarefaIndividual {
         return format.format(data.getTime());
     }
 
+
+
     public String getTar_id() {
         return tar_id;
     }
