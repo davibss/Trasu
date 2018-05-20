@@ -1,5 +1,14 @@
 package br.com.trasudev.trasu.entidades;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
+
 public class TarefaGrupal {
     private String tar_id;
     private String tar_nome;
@@ -15,6 +24,55 @@ public class TarefaGrupal {
     public TarefaGrupal(){
 
     }
+
+    public void cadastrar(DatabaseReference databaseReference, String nome, String descricao,
+                          String prioridade, int prazo, String idGrupo, int notificacao){
+        this.setTar_id(UUID.randomUUID().toString());
+        this.setTar_nome(nome);
+        this.setTar_descricao(descricao);
+        this.setTar_prioridade(prioridade);
+        //region Data
+        Date data = new Date();
+        this.setTar_dataInicial(dataTransformer(data));
+        this.setTar_dataFinal(somarData(prazo,data));
+        //endregion
+        this.setTar_prazo(prazo);
+        this.setTar_id_grp(idGrupo);
+        this.setTar_status(0);
+        this.setTar_notificacao(notificacao);
+        databaseReference.child("grupo").child(idGrupo).
+                child("tarefa_grupal").child(this.getTar_id()).setValue(this);
+    }
+
+    public void excluir(DatabaseReference databaseReference, TarefaGrupal tarefa, Grupo grupo){
+        databaseReference.child("grupo").child(grupo.getGrp_id()).
+                child("tarefa_grupal").child(tarefa.getTar_id())
+                .removeValue();
+    }
+
+    public void alterar(DatabaseReference databaseReference, TarefaGrupal tarefa,
+                        String nome, String descricao, String prioridade, int prazo,
+                        int notificacao, Grupo grupo){
+        tarefa.setTar_nome(nome);
+        tarefa.setTar_descricao(descricao);
+        tarefa.setTar_prioridade(prioridade);
+        //region Data
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        Date data = new Date();
+        try {
+            data = formato.parse(tarefa.getTar_dataInicial());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        tarefa.setTar_dataFinal(somarData(prazo,data));
+        //endregion
+        tarefa.setTar_prazo(prazo);
+        tarefa.setTar_notificacao(notificacao);
+        databaseReference.child("grupo").child(grupo.getGrp_id()).
+                child("tarefa_grupal").child(tarefa.getTar_id()).
+                setValue(tarefa);
+    }
+
 
     public String getTar_id() {
         return tar_id;
@@ -94,5 +152,18 @@ public class TarefaGrupal {
 
     public void setTar_notificacao(int tar_notificacao) {
         this.tar_notificacao = tar_notificacao;
+    }
+
+    public static String somarData (int dias,Date data) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data);
+        calendar.add(Calendar.DATE, dias);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH");
+        return format.format(calendar.getTime());
+    }
+
+    public static String dataTransformer(Date data){
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH");
+        return format.format(data.getTime());
     }
 }

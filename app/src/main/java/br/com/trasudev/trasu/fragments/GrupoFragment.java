@@ -313,6 +313,8 @@ public class GrupoFragment extends Fragment{
             itens.add("Gerenciar Tarefas");
             itens.add("Gerenciar integrantes");
             itens.add("Excluir");
+        }else{
+            itens.add("Ver tarefas");
         }
         itens.add("Ver integrantes");
         //adapter utilizando um layout customizado (TextView)
@@ -347,6 +349,10 @@ public class GrupoFragment extends Fragment{
                     dialog = alert.create();
                     dialog.show();
                     visualizarIntegrantes(alertLayout,grupo);
+                }else if (arg1 == itens.indexOf("Ver tarefas")){
+                    Intent intent = new Intent(context, TarefaGrupalActivity.class);
+                    intent.putExtra("grupoOBJ",grupo);
+                    startActivity(intent);
                 }
                 alerta.dismiss();
             }

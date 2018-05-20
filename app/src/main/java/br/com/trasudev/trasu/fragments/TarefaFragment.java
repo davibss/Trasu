@@ -378,7 +378,7 @@ public class TarefaFragment extends Fragment implements
 
     public void list_opcoes(final TarefaIndividual tarefa, final int position){
         ArrayList<String> itens = new ArrayList<String>();
-        itens.add("   Excluir");
+        itens.add("Excluir");
         //adapter utilizando um layout customizado (TextView)
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
