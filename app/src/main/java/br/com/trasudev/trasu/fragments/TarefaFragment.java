@@ -295,7 +295,7 @@ public class TarefaFragment extends Fragment implements
 
     private void eventoDatabaseCard() {
         databaseReference.child("usuario").child(firebaseUser.getUid()).
-                child("tarefa_individual").orderByChild("tar_prazo").
+                child("tarefa_individual").orderByChild("tar_dataFinal").
                 addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -307,6 +307,13 @@ public class TarefaFragment extends Fragment implements
                         mAdapter.notifyDataSetChanged();
                     }
                 }
+                /*Collections.sort(cartList, new Comparator<TarefaIndividual>() {
+                    @Override
+                    public int compare(TarefaIndividual o1, TarefaIndividual o2) {
+                        return o1.getTar_nome().compareTo(o2.getTar_nome());
+                    }
+                });
+                mAdapter.notifyDataSetChanged();*/
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
