@@ -1,5 +1,6 @@
 package br.com.trasudev.trasu.entidades;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -7,6 +8,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

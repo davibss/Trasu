@@ -3,6 +3,8 @@ package br.com.trasudev.trasu.entidades;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -31,7 +34,7 @@ import br.com.trasudev.trasu.classes.CircleTransform;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
-public class Usuario {
+public class Usuario implements Serializable{
     private String user_id;
     private String user_nome;
     private String user_senha;

@@ -93,7 +93,6 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onStart() {
-        Log.d("LOG","STARTOU");
         super.onStart();
     }
 

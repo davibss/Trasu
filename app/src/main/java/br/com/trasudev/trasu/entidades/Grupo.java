@@ -1,15 +1,19 @@
 package br.com.trasudev.trasu.entidades;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
 import static br.com.trasudev.trasu.activitys.MainActivity.txtName;
-
-public class Grupo {
+@SuppressWarnings("serial")
+public class Grupo implements Serializable{
     private String grp_id;
     private String grp_nome;
     private String grp_lider;
