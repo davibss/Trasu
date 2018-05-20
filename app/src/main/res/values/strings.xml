@@ -104,4 +104,6 @@
     <string name="nome_list">Nome:</string>
     <string name="email_list">E-mail:</string>
     <!--endregion-->
+
+    <string name="realizadores">Realizadores</string>
 </resources>

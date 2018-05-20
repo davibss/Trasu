@@ -1,5 +1,6 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,12 +20,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +49,16 @@ import java.util.List;
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.CartListGrupalAdapter;
+import br.com.trasudev.trasu.classes.CartUserAdapter;
+import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.classes.CustomItemClickListener;
 import br.com.trasudev.trasu.classes.RecyclerItemTouchHelper;
 import br.com.trasudev.trasu.entidades.Grupo;
+import br.com.trasudev.trasu.entidades.Realiza;
 import br.com.trasudev.trasu.entidades.TarefaGrupal;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
+import br.com.trasudev.trasu.entidades.Usuario;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
@@ -70,10 +85,16 @@ public class TarefaGrupalFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    StorageReference storageReference;
+
     private RecyclerView recyclerView;
     private List<TarefaGrupal> cartList;
     private CartListGrupalAdapter mAdapter;
     private CoordinatorLayout coordinatorLayout;
+
+    private RecyclerView recyclerViewRealizadores;
+    private List<Usuario> cartListRealizadores;
+    private CartUserAdapter mAdapterRealizadores;
 
 
     private String mParam1;
@@ -326,7 +347,14 @@ public class TarefaGrupalFragment extends Fragment {
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 if (arg1 == 0){
-                    alert("CLICOU EM GERENCIAR");
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.gerenciar_realizadores, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Gerenciar realizadores");
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    gerenciarRealizadoresGrupo(alertLayout,grupo,tarefa);
                 }
                 if ((arg1 == 1)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
                     new TarefaGrupal().excluir(databaseReference,tarefa,
@@ -343,6 +371,119 @@ public class TarefaGrupalFragment extends Fragment {
         alerta = builder.create();
         alerta.show();
     }
+
+    private void gerenciarRealizadoresGrupo(View alertLayout,final Grupo grupo,final TarefaGrupal tarefaGrupal) {
+        recyclerViewRealizadores = alertLayout.findViewById(R.id.scrollRealizadores);
+        cartListRealizadores = new ArrayList<>();
+        mAdapterRealizadores = new CartUserAdapter(getActivity(), cartListRealizadores){
+            @Override
+            public void onBindViewHolder(MyViewHolder holder,final int position) {
+                super.onBindViewHolder(holder, position);
+                final Usuario item = cartListRealizadores.get(position);
+                holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
+                holder.img_move.setVisibility(View.INVISIBLE);
+                holder.checkBox.setVisibility(View.VISIBLE);
+                for (Realiza realiza : tarefaGrupal.getRealiza().values()) {
+                    if (realiza.getRea_user_id().equals(item.getUser_id())){
+                        holder.checkBox.setChecked(true);
+                    }
+                }
+                holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked){
+                            new Realiza().cadastrar(databaseReference,grupo,tarefaGrupal,item);
+                        }else{
+                            new Realiza().remover(databaseReference,grupo,tarefaGrupal,item);
+                        }
+                    }
+                });
+                mostrarIconeUsuarios(holder,item);
+            }
+        };
+        RecyclerView.LayoutManager mLayoutManagerI = new LinearLayoutManager(context.getApplicationContext());
+        recyclerViewRealizadores.setLayoutManager(mLayoutManagerI);
+        recyclerViewRealizadores.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewRealizadores.setAdapter(mAdapterRealizadores);
+        mAdapterRealizadores.setClickListener(new CustomItemClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                final Usuario item = cartListRealizadores.get(position);
+                Usuario userSelect = new Usuario();
+                userSelect.setUser_id(item.getUser_id());
+                userSelect.setUser_nome(item.getUser_nome());
+                userSelect.setUser_email(item.getUser_email());
+                //eventoDatabaseCardUsuario();
+                //mAdapterRealizadores.removeItem(position);
+            }
+        });
+        eventoDatabaseCardRealizadores(grupo);
+    }
+
+    private void eventoDatabaseCardRealizadores(Grupo grupo) {
+        databaseReference.child("grupo").child(grupo.getGrp_id()).child("integrantes").
+                addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        cartListRealizadores.clear();
+                        for (DataSnapshot obj: dataSnapshot.getChildren()){
+                            Usuario u = obj.getValue(Usuario.class);
+                            cartListRealizadores.add(u);
+                            mAdapterRealizadores.notifyDataSetChanged();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void mostrarIconeUsuarios(final CartUserAdapter.MyViewHolder holder,final Usuario item){
+        databaseReference.child("usuario").child(item.getUser_id()).
+                addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Usuario user = dataSnapshot.getValue(Usuario.class);
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                        storageReference = FirebaseStorage.getInstance().getReference();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                StorageReference filePath = storageReference.child("img_profiles").
+                                        child(user.getUser_icon());
+                                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(final Uri uri) {
+                                        Activity activity = (Activity) context;
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Glide.with(context.getApplicationContext())
+                                                        .load(uri)
+                                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                                                        .apply(RequestOptions.centerCropTransform())
+                                                        .apply(RequestOptions.fitCenterTransform())
+                                                        .apply(RequestOptions.bitmapTransform(new CircleTransform()))
+                                                        .thumbnail(0.5f)
+                                                        .into(holder.img_integrante);
+                                                holder.progressBar.setVisibility(ProgressBar.INVISIBLE);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
 
     private void alert(String msg) {
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();

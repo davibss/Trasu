@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class TarefaGrupal {
@@ -20,6 +21,7 @@ public class TarefaGrupal {
     private String tar_id_grp;
     private int tar_status;
     private int tar_notificacao;
+    private HashMap<String, Realiza> realiza;
 
     public TarefaGrupal(){
 
@@ -154,7 +156,15 @@ public class TarefaGrupal {
         this.tar_notificacao = tar_notificacao;
     }
 
-    public static String somarData (int dias,Date data) {
+    public HashMap<String, Realiza> getRealiza() {
+        return realiza;
+    }
+
+    public void setRealiza(HashMap<String, Realiza> realiza) {
+        this.realiza = realiza;
+    }
+
+    public static String somarData (int dias, Date data) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);
         calendar.add(Calendar.DATE, dias);
