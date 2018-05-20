@@ -17,8 +17,7 @@ public class TarefaGrupalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefa_grupal);
         TextView textView = findViewById(R.id.textViewGrupal);
-        Intent i = getIntent();
-        Grupo grupo = (Grupo)i.getSerializableExtra("grupoOBJ");
+        Grupo grupo = (Grupo)getIntent().getSerializableExtra("grupoOBJ");
         //Log.d("IDGRP",grupo.getGrp_nome());
         for (Usuario u : grupo.getIntegrantes().values()) {
             //Log.d("USUARIOS",u.getUser_nome());
