@@ -88,8 +88,10 @@ public class MainActivity extends AppCompatActivity implements
     public static TextView txtPontos;
     private ProgressBar progressBar;
     private Toolbar toolbar;
+    /*private static final String urlNavHeaderBg =
+            "https://i.imgur.com/SGhvkjv.jpg";*/
     private static final String urlNavHeaderBg =
-            "https://i.imgur.com/SGhvkjv.jpg";
+            "https://www.setaswall.com/wp-content/uploads/2017/06/Material-Backgrounds-02-1920-x-1080-768x432.png";
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
