@@ -383,9 +383,11 @@ public class TarefaGrupalFragment extends Fragment {
                 holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
                 holder.img_move.setVisibility(View.INVISIBLE);
                 holder.checkBox.setVisibility(View.VISIBLE);
-                for (Realiza realiza : tarefaGrupal.getRealiza().values()) {
-                    if (realiza.getRea_user_id().equals(item.getUser_id())){
-                        holder.checkBox.setChecked(true);
+                if (tarefaGrupal.getRealiza()!=null){
+                    for (Realiza realiza : tarefaGrupal.getRealiza().values()) {
+                        if (realiza.getRea_user_id().equals(item.getUser_id())){
+                            holder.checkBox.setChecked(true);
+                        }
                     }
                 }
                 holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -405,7 +407,7 @@ public class TarefaGrupalFragment extends Fragment {
         recyclerViewRealizadores.setLayoutManager(mLayoutManagerI);
         recyclerViewRealizadores.setItemAnimator(new DefaultItemAnimator());
         recyclerViewRealizadores.setAdapter(mAdapterRealizadores);
-        mAdapterRealizadores.setClickListener(new CustomItemClickListener() {
+        /*mAdapterRealizadores.setClickListener(new CustomItemClickListener() {
             @Override
             public void onClick(View view, int position) {
                 final Usuario item = cartListRealizadores.get(position);
@@ -413,10 +415,8 @@ public class TarefaGrupalFragment extends Fragment {
                 userSelect.setUser_id(item.getUser_id());
                 userSelect.setUser_nome(item.getUser_nome());
                 userSelect.setUser_email(item.getUser_email());
-                //eventoDatabaseCardUsuario();
-                //mAdapterRealizadores.removeItem(position);
             }
-        });
+        });*/
         eventoDatabaseCardRealizadores(grupo);
     }
 

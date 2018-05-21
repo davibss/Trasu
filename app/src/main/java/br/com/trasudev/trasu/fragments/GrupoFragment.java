@@ -312,11 +312,12 @@ public class GrupoFragment extends Fragment{
         if (firebaseUser.getUid().equals(grupo.getGrp_lider())){
             itens.add("Gerenciar Tarefas");
             itens.add("Gerenciar integrantes");
-            itens.add("Excluir");
+            itens.add("Excluir grupo");
         }else{
             itens.add("Ver tarefas");
+            itens.add("Ver integrantes");
+            itens.add("Sair do grupo");
         }
-        itens.add("Ver integrantes");
         //adapter utilizando um layout customizado (TextView)
         final ArrayAdapter adapter = new ArrayAdapter(context, R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -353,6 +354,12 @@ public class GrupoFragment extends Fragment{
                     Intent intent = new Intent(context, TarefaGrupalActivity.class);
                     intent.putExtra("grupoOBJ",grupo);
                     startActivity(intent);
+                }else if (arg1 == itens.indexOf("Sair do grupo")){
+                    databaseReference.child("grupo").child(grupo.getGrp_id()).
+                            child("grp_integrantes").setValue(grupo.getGrp_integrantes()-1);
+                    databaseReference.child("grupo").child(grupo.getGrp_id()).
+                            child("integrantes").child(firebaseUser.getUid()).
+                            removeValue();
                 }
                 alerta.dismiss();
             }
