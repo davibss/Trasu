@@ -19,6 +19,7 @@ public class Grupo implements Serializable{
     private String grp_lider;
     private int grp_integrantes;
     private HashMap<String,Usuario> integrantes;
+    private HashMap<String,TarefaGrupal> tarefa_grupal;
 
     public Grupo(){
 
@@ -90,5 +91,13 @@ public class Grupo implements Serializable{
 
     public void setIntegrantes(HashMap<String, Usuario> integrantes) {
         this.integrantes = integrantes;
+    }
+
+    public HashMap<String, TarefaGrupal> getTarefa_grupal() {
+        return tarefa_grupal;
+    }
+
+    public void setTarefa_grupal(HashMap<String, TarefaGrupal> tarefa_grupal) {
+        this.tarefa_grupal = tarefa_grupal;
     }
 }

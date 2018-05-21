@@ -58,6 +58,7 @@ import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
 import br.com.trasudev.trasu.fragments.HomeFragmentTab;
+import br.com.trasudev.trasu.fragments.TabTarefaGrupalFragment;
 import br.com.trasudev.trasu.fragments.TarefaFragment;
 import br.com.trasudev.trasu.fragments.ContatoFragment;
 import br.com.trasudev.trasu.fragments.PerfilFragment;
@@ -67,6 +68,7 @@ import br.com.trasudev.trasu.fragments.SettingsFragment;
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
 public class MainActivity extends AppCompatActivity implements
+        TabTarefaGrupalFragment.OnFragmentInteractionListener,
     TarefaFragment.OnFragmentInteractionListener,
     ContatoFragment.OnFragmentInteractionListener,
     PerfilFragment.OnFragmentInteractionListener,

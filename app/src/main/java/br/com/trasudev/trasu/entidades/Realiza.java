@@ -2,7 +2,9 @@ package br.com.trasudev.trasu.entidades;
 
 import com.google.firebase.database.DatabaseReference;
 
-public class Realiza {
+import java.io.Serializable;
+
+public class Realiza implements Serializable{
     private String rea_id;
     private String rea_user_id;
     private int rea_status;

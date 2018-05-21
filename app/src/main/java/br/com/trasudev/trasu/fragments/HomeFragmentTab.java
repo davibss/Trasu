@@ -77,7 +77,7 @@ public class HomeFragmentTab extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new TarefaFragment(), "Tarefas");
-        adapter.addFragment(new TarefaFragment(), "Tarefas2");
+        adapter.addFragment(new TabTarefaGrupalFragment(), "Tarefas2");
         viewPager.setAdapter(adapter);
         View customView = adapter.getCustomView(context,0);
         TextView texto = customView.findViewById(R.id.textView);
