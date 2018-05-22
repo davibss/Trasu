@@ -2,6 +2,7 @@ package br.com.trasudev.trasu.activitys;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -55,6 +56,7 @@ import java.util.List;
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.TarefaGrupal;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
 import br.com.trasudev.trasu.fragments.HomeFragmentTab;
@@ -404,6 +406,34 @@ public class MainActivity extends AppCompatActivity implements
                     case R.id.nav_settings:
                         navItemIndex = 4;
                         CURRENT_TAG = TAG_SETTINGS;
+                        break;
+                    case R.id.nav_logout:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Deseja realmente sair?")
+                                .setCancelable(false)
+                                .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        progressDialog = new ProgressDialog(MainActivity.this);
+                                        progressDialog.setMessage("Saindo...");
+                                        progressDialog.setCancelable(false);
+                                        progressDialog.show();
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Conexao.logOut();
+                                                finish();
+                                            }
+                                        }).start();
+                                    }
+                                }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        drawer.closeDrawers();
+                                        loadHomeFragment();
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
                         break;
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment

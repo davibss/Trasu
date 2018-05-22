@@ -334,11 +334,17 @@ public class TabTarefaGrupalFragment extends Fragment implements
                     mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
                     cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("RECEBER", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             new TarefaGrupal().finalizar(databaseReference, cartList.get(viewHolder.getAdapterPosition()),
                                     firebaseUser, mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())));
                             mAdapter.removeItem(position);
+                        }
+                    }).setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //mAdapter.notifyItemRemoved(position +1);
+                            mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
                         }
                     });
             AlertDialog alert = builder.create();

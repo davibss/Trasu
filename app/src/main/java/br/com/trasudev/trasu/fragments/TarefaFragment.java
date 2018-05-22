@@ -323,7 +323,7 @@ public class TarefaFragment extends Fragment implements
 
 
     @Override
-    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, int position) {
+    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, final int position) {
         if (viewHolder instanceof CartListAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
             String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
@@ -337,10 +337,17 @@ public class TarefaFragment extends Fragment implements
                     mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
                     cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
                     .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Receber", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             new TarefaIndividual().finalizar(databaseReference, cartList.get(viewHolder.getAdapterPosition()),
                                     firebaseUser, mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())));
+                            mAdapter.removeItem(position);
+                        }
+                    }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //mAdapter.notifyItemRemoved(position +1);
+                            mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
                         }
                     });
             AlertDialog alert = builder.create();

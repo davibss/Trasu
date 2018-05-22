@@ -290,14 +290,21 @@ public class GrupoFragment extends Fragment{
         databaseReference.child("grupo").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //listTarefa.clear();
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     Grupo g = obj.getValue(Grupo.class);
-                    if (g.getIntegrantes().containsKey(firebaseUser.getUid())){
+                    if (g.getIntegrantes() != null) {
+                        for (Usuario u : g.getIntegrantes().values()) {
+                            if (u.getUser_id().equals(firebaseUser.getUid())){
+                                cartList.add(g);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                    /*if (g.getIntegrantes().containsKey(firebaseUser.getUid())){
                         cartList.add(g);
                         mAdapter.notifyDataSetChanged();
-                    }
+                    }*/
                 }
             }
             @Override
@@ -337,7 +344,7 @@ public class GrupoFragment extends Fragment{
                     dialog.show();
                     gerenciarIntegrantesGrupo(alertLayout,grupo);
                     eventoAddRemove(grupo);
-                }else if (arg1 == itens.indexOf("Excluir")){
+                }else if (arg1 == itens.indexOf("Excluir grupo")){
                     new Grupo().excluir(databaseReference,grupo);
                     mAdapter.removeItem(position);
                 }else if (arg1 == itens.indexOf("Ver integrantes")){
