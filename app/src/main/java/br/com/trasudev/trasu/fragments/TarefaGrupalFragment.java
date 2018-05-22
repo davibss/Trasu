@@ -82,6 +82,8 @@ public class TarefaGrupalFragment extends Fragment {
     private AlertDialog alerta;
     private FloatingActionButton floatingActionButton;
 
+    private TextView textView;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -279,6 +281,9 @@ public class TarefaGrupalFragment extends Fragment {
                                 mAdapter.notifyDataSetChanged();
                             }
                         }
+                        if (cartList.isEmpty()){
+                            textView.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -325,13 +330,14 @@ public class TarefaGrupalFragment extends Fragment {
                         Integer.parseInt(editPrazo.getText().toString()),grupo.getGrp_id(),
                         checkBoxNotificacao.isChecked()?1:0);
                 dialog.dismiss();
-
+                textView.setVisibility(View.INVISIBLE);
             }
         });
     }
 
     private void inicializarComponentes(View rootView) {
         floatingActionButton = rootView.findViewById(R.id.floatingActionButtonLider);
+        textView = rootView.findViewById(R.id.textViewNothing);
         if (grupo.getGrp_lider().equals(firebaseUser.getUid())){
             floatingActionButton.setVisibility(View.VISIBLE);
         }

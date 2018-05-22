@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
@@ -70,6 +71,8 @@ public class TabTarefaGrupalFragment extends Fragment implements
     private List<TarefaGrupal> cartList;
     private CartListGrupalAdapter mAdapter;
     private CoordinatorLayout coordinatorLayout;
+
+    private TextView textView;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -195,6 +198,9 @@ public class TabTarefaGrupalFragment extends Fragment implements
                                 }
                             }
                         }
+                        if (cartList.isEmpty()){
+                            textView.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -293,6 +299,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
     }
 
     private void inicializarComponentes(View rootView) {
+        textView = rootView.findViewById(R.id.textViewNothing);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

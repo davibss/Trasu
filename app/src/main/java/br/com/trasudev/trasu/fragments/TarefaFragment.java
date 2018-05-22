@@ -78,6 +78,7 @@ public class TarefaFragment extends Fragment implements
     private List<TarefaIndividual> cartList;
     private CartListAdapter mAdapter;
     private CoordinatorLayout coordinatorLayout;
+    private TextView textView;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -153,6 +154,7 @@ public class TarefaFragment extends Fragment implements
 
     private void inicializarComponentes(View rootView){
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
+        textView = rootView.findViewById(R.id.textViewNothing);
     }
 
     private void inicializarComponentesTarefa(View alertLayout) {
@@ -177,7 +179,7 @@ public class TarefaFragment extends Fragment implements
                         Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
                         checkBoxNotificacao.isChecked()?1:0);
                 dialog.dismiss();
-
+                textView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -305,6 +307,9 @@ public class TarefaFragment extends Fragment implements
                         cartList.add(p);
                         mAdapter.notifyDataSetChanged();
                     }
+                }
+                if (cartList.isEmpty()){
+                    textView.setVisibility(View.VISIBLE);
                 }
                 /*Collections.sort(cartList, new Comparator<TarefaIndividual>() {
                     @Override

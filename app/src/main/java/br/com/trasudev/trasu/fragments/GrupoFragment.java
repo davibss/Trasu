@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -89,6 +90,8 @@ public class GrupoFragment extends Fragment{
     private RecyclerView recyclerViewUser;
     private List<Usuario> cartListUsuario;
     private CartUserAdapter mAdapterUsuario;
+
+    private TextView textView;
 
     private RecyclerView recyclerViewIntegrante;
     private List<Usuario> cartListIntegrante;
@@ -156,6 +159,7 @@ public class GrupoFragment extends Fragment{
 
     private void inicializarComponentes(View rootView){
         floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingActionButton);
+        textView = rootView.findViewById(R.id.textViewNothing);
     }
 
     private void inicializarComponentesGrupo(View alertLayout) {
@@ -167,6 +171,7 @@ public class GrupoFragment extends Fragment{
                 new Grupo().cadastrar(databaseReference,editNome.getText().toString(),
                         firebaseUser);
                 dialog.dismiss();
+                textView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -305,6 +310,9 @@ public class GrupoFragment extends Fragment{
                         cartList.add(g);
                         mAdapter.notifyDataSetChanged();
                     }*/
+                }
+                if (cartList.isEmpty()){
+                    textView.setVisibility(View.VISIBLE);
                 }
             }
             @Override
