@@ -2,6 +2,7 @@ package br.com.trasudev.trasu.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -81,6 +83,7 @@ public class GrupoFragment extends Fragment{
     private FloatingActionButton floatingActionButton;
     private AlertDialog dialog;
     private AlertDialog alerta;
+    private ProgressDialog progressDialog;
 
     private RecyclerView recyclerView;
     private List<Grupo> cartList;
@@ -215,14 +218,9 @@ public class GrupoFragment extends Fragment{
                     holder.viewForeground.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            LayoutInflater inflateDialog = getLayoutInflater();
-                            View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
-                            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                            alert.setTitle("Visualizar/alterar grupo");
-                            alert.setView(alertLayout);
-                            dialog = alert.create();
-                            dialog.show();
-                            alterarComponentesGrupo(alertLayout, mAdapter.getItem(position));
+                            Intent intent = new Intent(context, TarefaGrupalActivity.class);
+                            intent.putExtra("grupoOBJ",item);
+                            startActivity(intent);
                         }
                     });
                 }
@@ -325,7 +323,7 @@ public class GrupoFragment extends Fragment{
     public void list_opcoes(final Grupo grupo, final int position){
         final ArrayList<String> itens = new ArrayList<String>();
         if (firebaseUser.getUid().equals(grupo.getGrp_lider())){
-            itens.add("Gerenciar Tarefas");
+            itens.add("Visualizar/alterar grupo");
             itens.add("Gerenciar integrantes");
             itens.add("Excluir grupo");
         }else{
@@ -338,10 +336,15 @@ public class GrupoFragment extends Fragment{
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                if (arg1 == itens.indexOf("Gerenciar Tarefas")){
-                    Intent intent = new Intent(context, TarefaGrupalActivity.class);
-                    intent.putExtra("grupoOBJ",grupo);
-                    startActivity(intent);
+                if (arg1 == itens.indexOf("Visualizar/alterar grupo")){
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setTitle("Visualizar/alterar grupo");
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    alterarComponentesGrupo(alertLayout, mAdapter.getItem(position));
                 }else if (arg1 == itens.indexOf("Gerenciar integrantes")) {
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_integrantes, null);
