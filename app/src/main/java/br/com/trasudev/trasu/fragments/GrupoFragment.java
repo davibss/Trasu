@@ -83,7 +83,6 @@ public class GrupoFragment extends Fragment{
     private FloatingActionButton floatingActionButton;
     private AlertDialog dialog;
     private AlertDialog alerta;
-    private ProgressDialog progressDialog;
 
     private RecyclerView recyclerView;
     private List<Grupo> cartList;
@@ -489,6 +488,7 @@ public class GrupoFragment extends Fragment{
         mAdapterIntegrante.setClickListener(new CustomItemClickListener() {
             @Override
             public void onClick(View view, int position) {
+                alert("Aguarde...");
                 final Usuario item = cartListIntegrante.get(position);
                 Usuario userSelect = new Usuario();
                 userSelect.setUser_id(item.getUser_id());
@@ -499,6 +499,7 @@ public class GrupoFragment extends Fragment{
                 databaseReference.child("grupo").child(grupo.getGrp_id()).
                         child("integrantes").child(userSelect.getUser_id()).
                         removeValue();
+                alert("Integrante removido!");
             }
         });
         eventoDatabaseCardIntegrante(grupo);
@@ -523,6 +524,7 @@ public class GrupoFragment extends Fragment{
         mAdapterUsuario.setClickListener(new CustomItemClickListener() {
             @Override
             public void onClick(View view, int position) {
+                alert("Aguarde...");
                 final Usuario item = cartListUsuario.get(position);
                 Usuario userSelect = new Usuario();
                 userSelect.setUser_id(item.getUser_id());
@@ -534,6 +536,7 @@ public class GrupoFragment extends Fragment{
                         child("integrantes").child(userSelect.getUser_id()).
                         setValue(userSelect);
                 eventoDatabaseCardUsuario();
+                alert("Usuário adicionado");
             }
         });
         eventoDatabaseCardUsuario();

@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -237,13 +238,28 @@ public class TarefaFragment extends Fragment implements
                 LayoutInflater inflateDialog = getLayoutInflater();
                 View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("Cadastrar tarefa");
+                alert.setCustomTitle(customTitle(inflateDialog,"Cadastrar tarefa"));
                 alert.setView(alertLayout);
                 dialog = alert.create();
                 dialog.show();
                 inicializarComponentesTarefa(alertLayout);
             }
         });
+    }
+
+    private View customTitle(LayoutInflater inflateDialog, String title){
+        View customTitle = inflateDialog.inflate(R.layout.title_bar, null);
+        ImageView imageView = customTitle.findViewById(R.id.btnVoltar);
+        TextView textView = customTitle.findViewById(R.id.txtTitle);
+        imageView.setImageResource(R.drawable.ic_arrow_back_black_24dp);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        textView.setText(title);
+        return customTitle;
     }
 
     @Override
@@ -271,7 +287,7 @@ public class TarefaFragment extends Fragment implements
                         LayoutInflater inflateDialog = getLayoutInflater();
                         View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setTitle("Visualizar/alterar tarefa");
+                        alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar tarefa"));
                         alert.setView(alertLayout);
                         dialog = alert.create();
                         dialog.show();
