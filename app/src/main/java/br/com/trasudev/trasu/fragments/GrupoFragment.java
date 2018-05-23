@@ -185,7 +185,8 @@ public class GrupoFragment extends Fragment{
                 LayoutInflater inflateDialog = getLayoutInflater();
                 View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("Cadastrar");
+                //alert.setTitle("Cadastrar grupo");
+                alert.setCustomTitle(customTitle(inflateDialog,"Cadastrar grupo"));
                 alert.setView(alertLayout);
                 dialog = alert.create();
                 dialog.show();
@@ -319,6 +320,21 @@ public class GrupoFragment extends Fragment{
         });
     }
 
+    private View customTitle(LayoutInflater inflateDialog, String title){
+        View customTitle = inflateDialog.inflate(R.layout.title_bar, null);
+        ImageView imageView = customTitle.findViewById(R.id.btnVoltar);
+        TextView textView = customTitle.findViewById(R.id.txtTitle);
+        imageView.setImageResource(R.drawable.ic_arrow_back_black_24dp);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        textView.setText(title);
+        return customTitle;
+    }
+
     public void list_opcoes(final Grupo grupo, final int position){
         final ArrayList<String> itens = new ArrayList<String>();
         if (firebaseUser.getUid().equals(grupo.getGrp_lider())){
@@ -339,7 +355,8 @@ public class GrupoFragment extends Fragment{
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
                     final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Visualizar/alterar grupo");
+                    //alert.setTitle("Visualizar/alterar grupo");
+                    alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar grupo"));
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
@@ -348,7 +365,8 @@ public class GrupoFragment extends Fragment{
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_integrantes, null);
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Gerenciar integrantes");
+                    //alert.setTitle("Gerenciar integrantes");
+                    alert.setCustomTitle(customTitle(inflateDialog,"Gerenciar integrantes"));
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
@@ -362,7 +380,8 @@ public class GrupoFragment extends Fragment{
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.visualizar_integrantes, null);
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Ver integrantes");
+                    //alert.setTitle("Ver integrantes");
+                    alert.setCustomTitle(customTitle(inflateDialog,"Ver integrantes"));
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
@@ -499,7 +518,7 @@ public class GrupoFragment extends Fragment{
                 databaseReference.child("grupo").child(grupo.getGrp_id()).
                         child("integrantes").child(userSelect.getUser_id()).
                         removeValue();
-                alert("Integrante removido!");
+                alert("Integrante removido");
             }
         });
         eventoDatabaseCardIntegrante(grupo);
