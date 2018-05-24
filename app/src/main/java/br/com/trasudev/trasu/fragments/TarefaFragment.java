@@ -321,11 +321,13 @@ public class TarefaFragment extends Fragment implements
                     TarefaIndividual p = obj.getValue(TarefaIndividual.class);
                     if (p.getTar_status()==0) {
                         cartList.add(p);
-                        mAdapter.notifyDataSetChanged();
                     }
                 }
+                mAdapter.notifyDataSetChanged();
                 if (cartList.isEmpty()){
                     textView.setVisibility(View.VISIBLE);
+                }else{
+                    textView.setVisibility(View.INVISIBLE);
                 }
                 /*Collections.sort(cartList, new Comparator<TarefaIndividual>() {
                     @Override

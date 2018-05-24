@@ -280,11 +280,13 @@ public class TarefaGrupalFragment extends Fragment {
                             TarefaGrupal p = obj.getValue(TarefaGrupal.class);
                             if (p.getTar_status()==0) {
                                 cartList.add(p);
-                                mAdapter.notifyDataSetChanged();
                             }
                         }
+                        mAdapter.notifyDataSetChanged();
                         if (cartList.isEmpty()){
                             textView.setVisibility(View.VISIBLE);
+                        }else{
+                            textView.setVisibility(View.INVISIBLE);
                         }
                     }
                     @Override

@@ -300,7 +300,6 @@ public class GrupoFragment extends Fragment{
                         for (Usuario u : g.getIntegrantes().values()) {
                             if (u.getUser_id().equals(firebaseUser.getUid())){
                                 cartList.add(g);
-                                mAdapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -309,8 +308,11 @@ public class GrupoFragment extends Fragment{
                         mAdapter.notifyDataSetChanged();
                     }*/
                 }
+                mAdapter.notifyDataSetChanged();
                 if (cartList.isEmpty()){
                     textView.setVisibility(View.VISIBLE);
+                }else{
+                    textView.setVisibility(View.INVISIBLE);
                 }
             }
             @Override

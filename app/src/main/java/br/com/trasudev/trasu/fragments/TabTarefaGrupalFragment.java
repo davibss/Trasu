@@ -208,15 +208,17 @@ public class TabTarefaGrupalFragment extends Fragment implements
                                             if (realiza.getRea_user_id().equals(firebaseUser.getUid())&&
                                                     realiza.getRea_status()==0){
                                                 cartList.add(tg);
-                                                mAdapter.notifyDataSetChanged();
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                        mAdapter.notifyDataSetChanged();
                         if (cartList.isEmpty()){
                             textView.setVisibility(View.VISIBLE);
+                        }else{
+                            textView.setVisibility(View.INVISIBLE);
                         }
                     }
                     @Override
