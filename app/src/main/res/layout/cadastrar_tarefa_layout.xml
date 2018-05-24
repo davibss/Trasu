@@ -37,37 +37,43 @@
                     android:inputType="textMultiLine" />
             </ScrollView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="@string/tarPrioridadeText"
-                android:layout_margin="8dp"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
-            <RadioGroup
-                android:id="@+id/radioGroup"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
-                android:layout_margin="8dp"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <RadioButton
-                    android:id="@+id/radioBaixa"
-                    android:text="@string/baixa"
-                    android:textSize="14sp"
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioButton
-                    android:id="@+id/radioMedia"
-                    android:text="@string/media"
-                    android:textSize="14sp"
+                    android:text="@string/tarPrioridadeText"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"/>
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioButton
-                    android:id="@+id/radioAlta"
-                    android:textSize="14sp"
-                    android:text="@string/alta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </RadioGroup>
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:id="@+id/radioBaixa"
+                        android:text="@string/baixa"
+                        android:textSize="10sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <RadioButton
+                        android:id="@+id/radioMedia"
+                        android:text="@string/media"
+                        android:textSize="10sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <RadioButton
+                        android:id="@+id/radioAlta"
+                        android:textSize="10sp"
+                        android:text="@string/alta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RadioGroup>
+            </LinearLayout>
             <EditText
                 android:id="@+id/editTextTarPrazo"
                 android:layout_width="wrap_content"

@@ -355,26 +355,34 @@ public class TarefaFragment extends Fragment implements
             final TarefaIndividual deletedItem = cartList.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
-                    mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
-                    cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
-                    .setCancelable(false)
-                    .setPositiveButton("Receber", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            new TarefaIndividual().finalizar(databaseReference, cartList.get(viewHolder.getAdapterPosition()),
-                                    firebaseUser, mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())));
-                            mAdapter.removeItem(position);
-                        }
-                    }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //mAdapter.notifyItemRemoved(position +1);
-                            mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+            if (deletedItem.getTar_status()==0&&!mAdapter.subtrairDatas(deletedItem).equals("0")){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
+                        mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
+                        cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
+                        .setCancelable(false)
+                        .setPositiveButton("Receber", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new TarefaIndividual().finalizar(databaseReference, deletedItem,
+                                        firebaseUser, mAdapter.subtrairDatas(deletedItem));
+                                mAdapter.removeItem(position);
+                            }
+                        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //mAdapter.notifyItemRemoved(position +1);
+                        mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }else if (deletedItem.getTar_status()==1){
+                alert("Tarefa já finalizada");
+                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+            }else if (mAdapter.subtrairDatas(deletedItem).equals("0")){
+                alert("Tarefa expirada");
+                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+            }
         }
     }
 
@@ -414,14 +422,23 @@ public class TarefaFragment extends Fragment implements
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                if ((arg1 == 0)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
-                    new TarefaIndividual().excluir(databaseReference,tarefa,
-                            firebaseUser);
-                    mAdapter.removeItem(position);
-                }else if ((arg1 == 0)&&tarefa.getTar_status()==1){
-                    alert("Tarefa já finalizada");
-                }else if ((arg1 == 0)&&mAdapter.subtrairDatas(tarefa).equals("0")){
-                    alert("Tarefa expirada");
+                if (arg1 == 0){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Deseja excluir a tarefa?")
+                            .setCancelable(false)
+                            .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    new TarefaIndividual().excluir(databaseReference,tarefa,firebaseUser);
+                                    mAdapter.removeItem(position);
+                                }
+                            }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }
                 alerta.dismiss();
             }

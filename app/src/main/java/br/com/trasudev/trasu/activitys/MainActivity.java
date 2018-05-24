@@ -178,9 +178,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (navItemIndex == 3) {
+        /*if (navItemIndex == 3) {
             getMenuInflater().inflate(R.menu.menu, menu);
-        }
+        }*/
         // when fragment is notifications, load the menu created for notifications
         /*if (navItemIndex == 3) {
             getMenuInflater().inflate(R.menu.notifications, menu);
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
+        /*if (id == R.id.action_logout) {
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setMessage("Saindo...");
             progressDialog.setCancelable(false);
@@ -202,10 +202,10 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void run() {
                     Conexao.logOut();
-                    finish();
+                     finish();
                 }
             }).start();
-        }
+        }*/
 
         // user is in notifications fragment
         // and selected 'Mark all as Read'

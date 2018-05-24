@@ -383,7 +383,26 @@ public class TarefaGrupalFragment extends Fragment {
                     dialog.show();
                     gerenciarRealizadoresGrupo(alertLayout,grupo,tarefa);
                 }
-                if ((arg1 == 1)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
+                if (arg1 == 1){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Deseja excluir a tarefa?")
+                            .setCancelable(false)
+                            .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    new TarefaGrupal().excluir(databaseReference,tarefa,
+                                            grupo);
+                                    mAdapter.removeItem(position);
+                                }
+                            }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                /*if ((arg1 == 1)&&tarefa.getTar_status()==0&&!mAdapter.subtrairDatas(tarefa).equals("0")){
                     new TarefaGrupal().excluir(databaseReference,tarefa,
                             grupo);
                     mAdapter.removeItem(position);
@@ -391,7 +410,7 @@ public class TarefaGrupalFragment extends Fragment {
                     alert("Tarefa já finalizada");
                 }else if ((arg1 == 1)&&mAdapter.subtrairDatas(tarefa).equals("0")){
                     alert("Tarefa expirada");
-                }
+                }*/
                 alerta.dismiss();
             }
         });

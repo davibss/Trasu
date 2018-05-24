@@ -31,7 +31,8 @@
             android:label="@string/tarefasText"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activitys.TarefaGrupalActivity"></activity>
+        <activity android:name=".activitys.TarefaGrupalActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
