@@ -31,7 +31,7 @@
             android:lineSpacingExtra="10dp"
             android:textAlignment="center"
             android:layout_marginTop="8dp"
-            android:text="Não há tarefas registradas neste grupo\nCadastre uma nova =)"
+            android:text="Não há tarefas registradas \nneste grupo"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

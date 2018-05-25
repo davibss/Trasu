@@ -224,13 +224,7 @@ public class TarefaGrupalFragment extends Fragment {
             buttonAlta.setKeyListener(null);
             buttonMedia.setKeyListener(null);
             buttonBaixa.setKeyListener(null);
-            btnAlterar.setText("Voltar");
-            btnAlterar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
+            btnAlterar.setVisibility(View.GONE);
         }else {
             btnAlterar.setText("Alterar");
             btnAlterar.setOnClickListener(new View.OnClickListener() {

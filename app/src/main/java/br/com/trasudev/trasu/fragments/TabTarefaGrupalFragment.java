@@ -285,7 +285,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
         buttonAlta.setKeyListener(null);
         buttonMedia.setKeyListener(null);
         buttonBaixa.setKeyListener(null);
-        btnAlterar.setText("Voltar");
+        btnAlterar.setVisibility(View.GONE);
         btnAlterar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
