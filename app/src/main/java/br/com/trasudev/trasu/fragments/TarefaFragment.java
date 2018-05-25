@@ -165,6 +165,7 @@ public class TarefaFragment extends Fragment implements
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        checkValue = "";
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -175,12 +176,17 @@ public class TarefaFragment extends Fragment implements
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
-                        editDescricao.getText().toString(),checkValue,
-                        Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
-                        checkBoxNotificacao.isChecked()?1:0);
-                dialog.dismiss();
-                textView.setVisibility(View.INVISIBLE);
+                if (editNome.getText().equals("") || editDescricao.getText().equals("") ||
+                        checkValue.equals("") || editPrazo.getText().toString().equals("")){
+                    alert("Preencha o(s) campo(s) vazio(s)");
+                }else{
+                    new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
+                            editDescricao.getText().toString(),checkValue,
+                            Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
+                            checkBoxNotificacao.isChecked()?1:0);
+                    dialog.dismiss();
+                    textView.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }

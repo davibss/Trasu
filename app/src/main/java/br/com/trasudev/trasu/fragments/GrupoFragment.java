@@ -170,10 +170,14 @@ public class GrupoFragment extends Fragment{
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Grupo().cadastrar(databaseReference,editNome.getText().toString(),
-                        firebaseUser);
-                dialog.dismiss();
-                textView.setVisibility(View.INVISIBLE);
+                if (editNome.getText().toString().equals("")){
+                    alert("Preencha o campo vazio");
+                }else{
+                    new Grupo().cadastrar(databaseReference,editNome.getText().toString(),
+                            firebaseUser);
+                    dialog.dismiss();
+                    textView.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }

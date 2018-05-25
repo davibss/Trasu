@@ -55,6 +55,7 @@ import br.com.trasudev.trasu.classes.CircleTransform;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
+import br.com.trasudev.trasu.mask.MaskEditTextChangedListener;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static android.app.Activity.RESULT_OK;
@@ -151,7 +152,11 @@ public class PerfilFragment extends Fragment {
         imgUser = (ImageView) rootView.findViewById(R.id.img_user);
         nomeUser = (EditText) rootView.findViewById(R.id.editText_nome);
         DDDUser = (EditText) rootView.findViewById(R.id.editText_DDD);
+        MaskEditTextChangedListener maskDDD = new MaskEditTextChangedListener("+##", DDDUser);
+        DDDUser.addTextChangedListener(maskDDD);
         telUser = (EditText) rootView.findViewById(R.id.editText_telefone);
+        MaskEditTextChangedListener maskTelefone = new MaskEditTextChangedListener("(##)#####-####", telUser);
+        telUser.addTextChangedListener(maskTelefone);
         btnAlterar = (Button) rootView.findViewById(R.id.btnAlterar);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         progressDialog = new ProgressDialog(getActivity());
@@ -254,12 +259,17 @@ public class PerfilFragment extends Fragment {
         btnAlterar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Atualizando...");
-                progressDialog.show();
-                new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
-                        telUser,usuarioStatic.getUser_icon(),usuarioStatic);
-                progressDialog.dismiss();
-                Toast.makeText(context,"Dados alterados",Toast.LENGTH_SHORT).show();
+                if (nomeUser.getText().toString().equals("") || DDDUser.getText().toString().equals("") ||
+                        telUser.getText().toString().equals("")){
+                    Toast.makeText(context,"Preencha os campos vazios",Toast.LENGTH_SHORT).show();
+                }else{
+                    progressDialog.setMessage("Atualizando...");
+                    progressDialog.show();
+                    new Usuario().alterar(databaseReference,firebaseUser,nomeUser,DDDUser,
+                            telUser,usuarioStatic.getUser_icon(),usuarioStatic);
+                    progressDialog.dismiss();
+                    Toast.makeText(context,"Dados alterados",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
