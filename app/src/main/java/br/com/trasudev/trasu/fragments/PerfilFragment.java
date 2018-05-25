@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,8 +30,11 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,6 +59,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static android.app.Activity.RESULT_OK;
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
+import static br.com.trasudev.trasu.activitys.MainActivity.txtWebsite;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,8 +74,10 @@ public class PerfilFragment extends Fragment {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     private StorageReference storageReference;
+    private FirebaseAuth firebaseAuth;
 
     private ImageView imgUser;
+    private TextView redefinirSenha;
     private EditText nomeUser,DDDUser,telUser;
     private Button btnAlterar;
     private ProgressDialog progressDialog;
@@ -140,6 +147,7 @@ public class PerfilFragment extends Fragment {
     }
 
     private void inicializarComponentes(View rootView){
+        redefinirSenha = rootView.findViewById(R.id.redefinirSenha);
         imgUser = (ImageView) rootView.findViewById(R.id.img_user);
         nomeUser = (EditText) rootView.findViewById(R.id.editText_nome);
         DDDUser = (EditText) rootView.findViewById(R.id.editText_DDD);
@@ -214,6 +222,30 @@ public class PerfilFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent,GALERY_INTENT);
+            }
+        });
+        redefinirSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.setMessage("Aguarde...");
+                progressDialog.show();
+                firebaseAuth = FirebaseAuth.getInstance();
+                firebaseAuth.sendPasswordResetEmail(txtWebsite.getText().toString()).
+                        addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context,
+                                            "Verifique sua caixa de entrada \npara redefinir sua senha",
+                                            Toast.LENGTH_LONG).show();
+                                }else{
+                                    Toast.makeText(context,
+                                            "O processo falhou, tente novamente",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
             }
         });
     }

@@ -40,7 +40,7 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, integrantes, lider;
-        public ImageView img_group,img_lider,menu_grupo;
+        public ImageView img_lider,menu_grupo;
         public ProgressBar progressBar;
         public RelativeLayout viewBackground;
         public ConstraintLayout viewForeground;
@@ -51,7 +51,7 @@ public class CartListGroupAdapter extends RecyclerView.Adapter<CartListGroupAdap
             progressBar = view.findViewById(R.id.progressBar);
             integrantes = view.findViewById(R.id.integrantes_group);
             lider = view.findViewById(R.id.lider_group);
-            img_group = view.findViewById(R.id.img_group);
+            /*img_group = view.findViewById(R.id.img_group);*/
             img_lider = view.findViewById(R.id.img_lider);
             menu_grupo = view.findViewById(R.id.menu_grupo);
             viewBackground = view.findViewById(R.id.view_background);

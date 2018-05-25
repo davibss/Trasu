@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout drawer;
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
-    private TextView txtWebsite;
+    public static TextView txtWebsite;
     public static  TextView txtName;
     public static TextView txtPontos;
     private ProgressBar progressBar;
@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initFirebase();
+        setPassword();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mHandler = new Handler();
@@ -176,6 +177,18 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void setPassword() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firebaseUser = Conexao.getFirebaseUser();
+                databaseReference.child("usuario").child(firebaseUser.getUid()).
+                        child("user_senha").setValue(getIntent().getStringExtra("senha"));
+            }
+        }).start();
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /*if (navItemIndex == 3) {
@@ -191,34 +204,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_logout) {
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage("Saindo...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Conexao.logOut();
-                     finish();
-                }
-            }).start();
-        }*/
-
-        // user is in notifications fragment
-        // and selected 'Mark all as Read'
-        if (id == R.id.action_mark_all_read) {
-            Toast.makeText(getApplicationContext(), "All notifications marked as read!", Toast.LENGTH_LONG).show();
-        }
-
-        // user is in notifications fragment
-        // and selected 'Clear All'
-        if (id == R.id.action_clear_notifications) {
-            Toast.makeText(getApplicationContext(), "Clear all notifications!", Toast.LENGTH_LONG).show();
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

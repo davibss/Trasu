@@ -1,11 +1,16 @@
 package br.com.trasudev.trasu.activitys;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,9 +29,11 @@ import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.Usuario;
 
+import static br.com.trasudev.trasu.activitys.MainActivity.txtWebsite;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText editEmail, editSenha;
-    private TextView txvCadastro;
+    private TextView txvCadastro,txtEsqueceu;
     private Button btnLogin;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -71,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         editSenha = (EditText) findViewById(R.id.editText_senha);
         txvCadastro = (TextView) findViewById(R.id.txv_cadastro);
         btnLogin = (Button) findViewById(R.id.btnLogin);
+        txtEsqueceu = findViewById(R.id.esqueceuSenha);
     }
 
     private void onClickButton() {
@@ -79,6 +87,50 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 startActivity(new Intent(getBaseContext(), CadastrarActivity.class));
                 finish();
+            }
+        });
+
+        txtEsqueceu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                //final EditText edittext = getLayoutInflater().inflate(R.layout.email_senha_recuperar,null);
+                View view = getLayoutInflater().inflate(R.layout.email_senha_recuperar,null);
+                final EditText editText = view.findViewById(R.id.esqueceuSenha);
+                builder.setView(view);
+                builder.setMessage("Recuperação de senha")
+                        .setCancelable(false)
+                        .setPositiveButton("ENVIAR", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                progressDialog = new ProgressDialog(LoginActivity.this);
+                                progressDialog.setMessage("Aguarde...");
+                                progressDialog.show();
+                                firebaseAuth = FirebaseAuth.getInstance();
+                                firebaseAuth.sendPasswordResetEmail(editText.getText().toString().trim()).
+                                        addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()){
+                                                    progressDialog.dismiss();
+                                                    Toast.makeText(getBaseContext(),
+                                                            "Verifique sua caixa de entrada \npara redefinir sua senha",
+                                                            Toast.LENGTH_LONG).show();
+                                                }else{
+                                                    Toast.makeText(getBaseContext(),
+                                                            "O processo falhou, tente novamente",
+                                                            Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        });
+                            }
+                        }).setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
@@ -115,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                            intent.putExtra("senha",senha);
                             btnLogin.setEnabled(true);
                             startActivity(intent);
                         }else {

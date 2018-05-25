@@ -106,4 +106,7 @@
     <!--endregion-->
 
     <string name="realizadores">Realizadores</string>
+
+    <string name="redefinirSenha">Redefinir senha</string>
+    <string name="esqueceuSenha">Esqueceu a senha?</string>
 </resources>
