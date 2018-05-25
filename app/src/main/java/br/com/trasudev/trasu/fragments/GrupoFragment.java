@@ -214,7 +214,7 @@ public class GrupoFragment extends Fragment{
             public void onBindViewHolder(final MyViewHolder holder,final int position) {
                 super.onBindViewHolder(holder, position);
                 final Grupo item = cartList.get(position);
-                if (item.getGrp_lider().equals(firebaseUser.getUid())){
+                /*if (item.getGrp_lider().equals(firebaseUser.getUid())){*/
                     holder.viewForeground.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -223,7 +223,7 @@ public class GrupoFragment extends Fragment{
                             startActivity(intent);
                         }
                     });
-                }
+                /*}*/
                 holder.menu_grupo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -344,7 +344,7 @@ public class GrupoFragment extends Fragment{
             itens.add("Gerenciar integrantes");
             itens.add("Excluir grupo");
         }else{
-            itens.add("Ver tarefas");
+            //itens.add("Ver tarefas");
             itens.add("Ver integrantes");
             itens.add("Sair do grupo");
         }
@@ -388,16 +388,29 @@ public class GrupoFragment extends Fragment{
                     dialog = alert.create();
                     dialog.show();
                     visualizarIntegrantes(alertLayout,grupo);
-                }else if (arg1 == itens.indexOf("Ver tarefas")){
+                /*}else if (arg1 == itens.indexOf("Ver tarefas")){
                     Intent intent = new Intent(context, TarefaGrupalActivity.class);
                     intent.putExtra("grupoOBJ",grupo);
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }else if (arg1 == itens.indexOf("Sair do grupo")){
-                    databaseReference.child("grupo").child(grupo.getGrp_id()).
-                            child("grp_integrantes").setValue(grupo.getGrp_integrantes()-1);
-                    databaseReference.child("grupo").child(grupo.getGrp_id()).
-                            child("integrantes").child(firebaseUser.getUid()).
-                            removeValue();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Deseja realmente sair do grupo?")
+                            .setCancelable(false)
+                            .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    databaseReference.child("grupo").child(grupo.getGrp_id()).
+                                            child("grp_integrantes").setValue(grupo.getGrp_integrantes()-1);
+                                    databaseReference.child("grupo").child(grupo.getGrp_id()).
+                                            child("integrantes").child(firebaseUser.getUid()).
+                                            removeValue();
+                                }
+                            }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }
                 alerta.dismiss();
             }

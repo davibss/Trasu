@@ -25,7 +25,7 @@
         <activity
             android:name=".activitys.CadastrarActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppThemeActionBar" />
         <activity
             android:name=".activitys.MainActivity"
             android:label="@string/tarefasText"
