@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -179,11 +180,13 @@ public class TarefaGrupalFragment extends Fragment {
                         View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                         //alert.setTitle("Visualizar/alterar tarefa");
-                        alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar tarefa"));
+                        alert.setCustomTitle(customTitle(inflateDialog,mAdapter.getItem(position).getTar_nome()));
                         alert.setView(alertLayout);
                         dialog = alert.create();
                         dialog.show();
-                        alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                        visualizarTarefa(alertLayout,mAdapter.getItem(position));
+                        //alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+
                     }});
                 if (grupo.getGrp_lider().equals(firebaseUser.getUid())){
                     holder.menu.setOnClickListener(new View.OnClickListener() {
@@ -202,6 +205,32 @@ public class TarefaGrupalFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLongClickable(true);
         eventoDatabaseCard();
+    }
+
+    private void visualizarTarefa(View alertLayout, final TarefaGrupal tarefa){
+        final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
+        final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
+        final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
+        final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
+        final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
+        final TextView textView = alertLayout.findViewById(R.id.prioridadeText);
+        final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
+        RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
+        RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
+        editDescricao.setBackgroundColor(Color.TRANSPARENT);
+        textView.setVisibility(View.GONE);
+        editNome.setVisibility(View.GONE);
+        editDescricao.setKeyListener(null);
+        group.setVisibility(View.GONE);
+        editPrazo.setVisibility(View.GONE);
+        checkBoxNotificacao.setVisibility(View.GONE);
+        btnAlterar.setVisibility(View.GONE);
+        buttonAlta.setVisibility(View.GONE);
+        buttonMedia.setVisibility(View.GONE);
+        buttonBaixa.setVisibility(View.GONE);
+        btnAlterar.setVisibility(View.GONE);
+        editDescricao.setText(tarefa.getTar_descricao());
     }
 
     private void alterarComponentesTarefa(View alertLayout,final TarefaGrupal tarefa) {
@@ -365,6 +394,7 @@ public class TarefaGrupalFragment extends Fragment {
 
     public void list_opcoes(final TarefaGrupal tarefa, final int position){
         ArrayList<String> itens = new ArrayList<String>();
+        itens.add("Alterar tarefa");
         itens.add("Gerenciar realizadores");
         itens.add("Excluir");
         //adapter utilizando um layout customizado (TextView)
@@ -374,6 +404,16 @@ public class TarefaGrupalFragment extends Fragment {
             public void onClick(DialogInterface arg0, int arg1) {
                 if (arg1 == 0){
                     LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    //alert.setTitle("Visualizar/alterar tarefa");
+                    alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar tarefa"));
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                } else if (arg1 == 1){
+                    LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_realizadores, null);
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     //alert.setTitle("Gerenciar realizadores");
@@ -382,8 +422,7 @@ public class TarefaGrupalFragment extends Fragment {
                     dialog = alert.create();
                     dialog.show();
                     gerenciarRealizadoresGrupo(alertLayout,grupo,tarefa);
-                }
-                if (arg1 == 1){
+                } else if (arg1 == 2){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Deseja excluir a tarefa?")
                             .setCancelable(false)

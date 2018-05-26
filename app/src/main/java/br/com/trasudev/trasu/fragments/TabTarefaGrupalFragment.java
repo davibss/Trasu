@@ -3,6 +3,7 @@ package br.com.trasudev.trasu.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -167,7 +169,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
                         LayoutInflater inflateDialog = getLayoutInflater();
                         View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setCustomTitle(customTitle(inflateDialog,"Visualizar tarefa grupal"));
+                        alert.setCustomTitle(customTitle(inflateDialog,mAdapter.getItem(position).getTar_nome()));
                         //alert.setTitle("Visualizar tarefa grupal");
                         alert.setView(alertLayout);
                         dialog = alert.create();
@@ -271,30 +273,33 @@ public class TabTarefaGrupalFragment extends Fragment implements
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
+        final TextView textView = alertLayout.findViewById(R.id.prioridadeText);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
         RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
         RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
-        editNome.setKeyListener(null);
+        editDescricao.setBackgroundColor(Color.TRANSPARENT);
+        textView.setVisibility(View.GONE);
+        editNome.setVisibility(View.GONE);
         editDescricao.setKeyListener(null);
         group.setEnabled(false);
-        editPrazo.setKeyListener(null);
-        checkBoxNotificacao.setKeyListener(null);
-        btnAlterar.setKeyListener(null);
-        buttonAlta.setKeyListener(null);
-        buttonMedia.setKeyListener(null);
-        buttonBaixa.setKeyListener(null);
+        editPrazo.setVisibility(View.GONE);
+        checkBoxNotificacao.setVisibility(View.GONE);
         btnAlterar.setVisibility(View.GONE);
-        btnAlterar.setOnClickListener(new View.OnClickListener() {
+        buttonAlta.setVisibility(View.GONE);
+        buttonMedia.setVisibility(View.GONE);
+        buttonBaixa.setVisibility(View.GONE);
+        btnAlterar.setVisibility(View.GONE);
+        /*btnAlterar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
                 }
-            });
-        editNome.setText(tarefa.getTar_nome());
+            });*/
+        /*editNome.setText(tarefa.getTar_nome());*/
         editDescricao.setText(tarefa.getTar_descricao());
-        if (tarefa.getTar_prioridade().equals("Alta")){
+        /*if (tarefa.getTar_prioridade().equals("Alta")){
             buttonAlta.setChecked(true);
             checkValue = buttonAlta.getText().toString();
         }else if (tarefa.getTar_prioridade().equals("Média")){
@@ -314,7 +319,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
                 RadioButton button = (RadioButton) group.findViewById(i);
                 checkValue = button.getText().toString();
             }
-        });
+        });*/
     }
 
     private void inicializarComponentes(View rootView) {

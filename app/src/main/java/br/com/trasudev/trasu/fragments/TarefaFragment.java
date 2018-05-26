@@ -191,6 +191,32 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
+    private void visualizarTarefa(View alertLayout, final TarefaIndividual tarefa){
+        final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
+        final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
+        final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
+        final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
+        final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
+        final TextView textView = alertLayout.findViewById(R.id.prioridadeText);
+        final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
+        RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
+        RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
+        editDescricao.setBackgroundColor(Color.TRANSPARENT);
+        textView.setVisibility(View.GONE);
+        editNome.setVisibility(View.GONE);
+        editDescricao.setKeyListener(null);
+        group.setVisibility(View.GONE);
+        editPrazo.setVisibility(View.GONE);
+        checkBoxNotificacao.setVisibility(View.GONE);
+        btnAlterar.setVisibility(View.GONE);
+        buttonAlta.setVisibility(View.GONE);
+        buttonMedia.setVisibility(View.GONE);
+        buttonBaixa.setVisibility(View.GONE);
+        btnAlterar.setVisibility(View.GONE);
+        editDescricao.setText(tarefa.getTar_descricao());
+    }
+
     private void alterarComponentesTarefa(View alertLayout, final TarefaIndividual tarefa){
         final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
@@ -293,11 +319,12 @@ public class TarefaFragment extends Fragment implements
                         LayoutInflater inflateDialog = getLayoutInflater();
                         View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar tarefa"));
+                        alert.setCustomTitle(customTitle(inflateDialog,mAdapter.getItem(position).getTar_nome()));
                         alert.setView(alertLayout);
                         dialog = alert.create();
                         dialog.show();
-                        alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                        //alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                        visualizarTarefa(alertLayout,mAdapter.getItem(position));
                         }});
                 holder.menu.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -422,13 +449,14 @@ public class TarefaFragment extends Fragment implements
 
     public void list_opcoes(final TarefaIndividual tarefa, final int position){
         ArrayList<String> itens = new ArrayList<String>();
-        itens.add("Excluir");
+        itens.add("Alterar tarefa");
+        itens.add("Excluir tarefa");
         //adapter utilizando um layout customizado (TextView)
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.item_alerta, itens);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                if (arg1 == 0){
+                if (arg1 == 1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Deseja excluir a tarefa?")
                             .setCancelable(false)
@@ -445,6 +473,15 @@ public class TarefaFragment extends Fragment implements
                     });
                     AlertDialog alert = builder.create();
                     alert.show();
+                }else if (arg1 == 0){
+                    LayoutInflater inflateDialog = getLayoutInflater();
+                    View alertLayout = inflateDialog.inflate(R.layout.cadastrar_tarefa_layout, null);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar tarefa"));
+                    alert.setView(alertLayout);
+                    dialog = alert.create();
+                    dialog.show();
+                    alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
                 }
                 alerta.dismiss();
             }
