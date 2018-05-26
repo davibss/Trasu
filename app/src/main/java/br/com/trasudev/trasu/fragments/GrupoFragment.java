@@ -379,8 +379,21 @@ public class GrupoFragment extends Fragment{
                     gerenciarIntegrantesGrupo(alertLayout,grupo);
                     eventoAddRemove(grupo);
                 }else if (arg1 == itens.indexOf("Excluir grupo")){
-                    new Grupo().excluir(databaseReference,grupo);
-                    mAdapter.removeItem(position);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Deseja realmente excluir o grupo?")
+                            .setCancelable(false)
+                            .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    new Grupo().excluir(databaseReference,grupo);
+                                    mAdapter.removeItem(position);
+                                }
+                            }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }else if (arg1 == itens.indexOf("Ver integrantes")){
                     // Ver integrantes
                     LayoutInflater inflateDialog = getLayoutInflater();

@@ -109,4 +109,7 @@
 
     <string name="redefinirSenha">Redefinir senha</string>
     <string name="esqueceuSenha">Esqueceu a senha?</string>
+
+    <string name="sobreActivity">Aplicativo desenvolvido por André Luís e Davi Barbosa
+        para o Trabalho de Conclusão de Curso do 3º Ano de Informática do Instituto Federal de Sergipe</string>
 </resources>

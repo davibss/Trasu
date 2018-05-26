@@ -424,12 +424,12 @@ public class MainActivity extends AppCompatActivity implements
                         break;
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
-                        //startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                        startActivity(new Intent(MainActivity.this, SobreActivity.class));
                         drawer.closeDrawers();
                         return true;
                     case R.id.nav_privacy_policy:
                         // launch new intent instead of loading fragment
-                        //startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
+                        startActivity(new Intent(MainActivity.this, AjudaActivity.class));
                         drawer.closeDrawers();
                         return true;
                     default:
