@@ -34,7 +34,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import br.com.trasudev.trasu.R;
@@ -221,6 +226,13 @@ public class TabTarefaGrupalFragment extends Fragment implements
                             textView.setVisibility(View.VISIBLE);
                         }else{
                             textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal>() {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    return converterData(o1.getTar_dataFinal()).
+                                            compareTo(converterData(o2.getTar_dataFinal()));
+                                }
+                            });
                         }
                     }
                     @Override
@@ -228,6 +240,17 @@ public class TabTarefaGrupalFragment extends Fragment implements
 
                     }
                 });
+    }
+
+    private Date converterData(String data){
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        Date date = null;
+        try {
+            date = formato.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     public void list_opcoes(final TarefaGrupal tarefa, final int position){
@@ -291,35 +314,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
         buttonMedia.setVisibility(View.GONE);
         buttonBaixa.setVisibility(View.GONE);
         btnAlterar.setVisibility(View.GONE);
-        /*btnAlterar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });*/
-        /*editNome.setText(tarefa.getTar_nome());*/
         editDescricao.setText(tarefa.getTar_descricao());
-        /*if (tarefa.getTar_prioridade().equals("Alta")){
-            buttonAlta.setChecked(true);
-            checkValue = buttonAlta.getText().toString();
-        }else if (tarefa.getTar_prioridade().equals("Média")){
-            buttonMedia.setChecked(true);
-            checkValue = buttonMedia.getText().toString();
-        }else if (tarefa.getTar_prioridade().equals("Baixa")){
-            buttonBaixa.setChecked(true);
-            checkValue = buttonBaixa.getText().toString();
-        }
-        editPrazo.setText(String.valueOf(tarefa.getTar_prazo()));
-        if (tarefa.getTar_notificacao() == 1) {
-            checkBoxNotificacao.setChecked(true);
-        }
-        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton button = (RadioButton) group.findViewById(i);
-                checkValue = button.getText().toString();
-            }
-        });*/
     }
 
     private void inicializarComponentes(View rootView) {

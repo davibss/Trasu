@@ -29,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -42,9 +43,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import br.com.trasudev.trasu.R;
@@ -80,7 +84,6 @@ public class TarefaFragment extends Fragment implements
     private CartListAdapter mAdapter;
     private CoordinatorLayout coordinatorLayout;
     private TextView textView;
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -345,10 +348,10 @@ public class TarefaFragment extends Fragment implements
 
     private void eventoDatabaseCard() {
         databaseReference.child("usuario").child(firebaseUser.getUid()).
-                child("tarefa_individual").orderByChild("tar_dataFinal").
+                child("tarefa_individual").
                 addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     TarefaIndividual p = obj.getValue(TarefaIndividual.class);
@@ -361,14 +364,14 @@ public class TarefaFragment extends Fragment implements
                     textView.setVisibility(View.VISIBLE);
                 }else{
                     textView.setVisibility(View.INVISIBLE);
+                    Collections.sort(cartList, new Comparator<TarefaIndividual>() {
+                        @Override
+                        public int compare(TarefaIndividual o1, TarefaIndividual o2) {
+                            return converterData(o1.getTar_dataFinal()).
+                                    compareTo(converterData(o2.getTar_dataFinal()));
+                        }
+                    });
                 }
-                /*Collections.sort(cartList, new Comparator<TarefaIndividual>() {
-                    @Override
-                    public int compare(TarefaIndividual o1, TarefaIndividual o2) {
-                        return o1.getTar_nome().compareTo(o2.getTar_nome());
-                    }
-                });
-                mAdapter.notifyDataSetChanged();*/
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -377,6 +380,16 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
+    private Date converterData(String data){
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = formato.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, final int position) {

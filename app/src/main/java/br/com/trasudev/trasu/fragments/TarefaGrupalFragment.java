@@ -45,7 +45,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import br.com.trasudev.trasu.R;
@@ -310,6 +315,13 @@ public class TarefaGrupalFragment extends Fragment {
                             textView.setVisibility(View.VISIBLE);
                         }else{
                             textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal>() {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    return converterData(o1.getTar_dataFinal()).
+                                            compareTo(converterData(o2.getTar_dataFinal()));
+                                }
+                            });
                         }
                     }
                     @Override
@@ -317,6 +329,17 @@ public class TarefaGrupalFragment extends Fragment {
 
                     }
                 });
+    }
+
+    private Date converterData(String data){
+        SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy HH");
+        Date date = null;
+        try {
+            date = formato.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     private void onClickEvent() {
