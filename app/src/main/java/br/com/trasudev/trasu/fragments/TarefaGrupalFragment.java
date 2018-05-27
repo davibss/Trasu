@@ -380,7 +380,10 @@ public class TarefaGrupalFragment extends Fragment {
                 if (editNome.getText().equals("") || editDescricao.getText().equals("") ||
                         checkValue.equals("") || editPrazo.getText().toString().equals("")){
                     alert("Preencha o(s) campo(s) vazio(s)");
-                }else{
+                } else if (Integer.parseInt(editPrazo.getText().toString()) < 0 ||
+                        Integer.parseInt(editPrazo.getText().toString()) > 365) {
+                    alert("O prazo deve estar entre 0 e 365 dias");
+                } else{
                     new TarefaGrupal().cadastrar(databaseReference,editNome.getText().toString(),
                             editDescricao.getText().toString(),checkValue,
                             Integer.parseInt(editPrazo.getText().toString()),grupo.getGrp_id(),

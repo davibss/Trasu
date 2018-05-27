@@ -4,31 +4,28 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.InputFilter;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -163,7 +160,10 @@ public class TarefaFragment extends Fragment implements
                 if (editNome.getText().equals("") || editDescricao.getText().equals("") ||
                         checkValue.equals("") || editPrazo.getText().toString().equals("")){
                     alert("Preencha o(s) campo(s) vazio(s)");
-                }else{
+                } else if (Integer.parseInt(editPrazo.getText().toString()) < 0 ||
+                        Integer.parseInt(editPrazo.getText().toString()) > 365){
+                    alert("O prazo deve estar entre 0 e 365 dias");
+                } else{
                     new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
                             editDescricao.getText().toString(),checkValue,
                             Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
@@ -412,10 +412,6 @@ public class TarefaFragment extends Fragment implements
             }
         }
     }
-
-
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

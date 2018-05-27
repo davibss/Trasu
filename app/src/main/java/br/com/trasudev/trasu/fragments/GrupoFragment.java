@@ -294,7 +294,7 @@ public class GrupoFragment extends Fragment{
     }
 
     private void eventoDatabaseCard() {
-        databaseReference.child("grupo").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("grupo").orderByChild("grp_nome").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 cartList.clear();
@@ -344,7 +344,7 @@ public class GrupoFragment extends Fragment{
     public void list_opcoes(final Grupo grupo, final int position){
         final ArrayList<String> itens = new ArrayList<String>();
         if (firebaseUser.getUid().equals(grupo.getGrp_lider())){
-            itens.add("Visualizar/alterar grupo");
+            itens.add("Alterar grupo");
             itens.add("Gerenciar integrantes");
             itens.add("Excluir grupo");
         }else{
@@ -357,12 +357,12 @@ public class GrupoFragment extends Fragment{
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                if (arg1 == itens.indexOf("Visualizar/alterar grupo")){
+                if (arg1 == itens.indexOf("Alterar grupo")){
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.cadastrar_grupo_layout, null);
                     final AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     //alert.setTitle("Visualizar/alterar grupo");
-                    alert.setCustomTitle(customTitle(inflateDialog,"Visualizar/alterar grupo"));
+                    alert.setCustomTitle(customTitle(inflateDialog,"Alterar grupo"));
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
