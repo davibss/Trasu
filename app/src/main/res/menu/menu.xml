@@ -13,6 +13,6 @@
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
-        android:title="@string/action_logout"
+        android:title="Relatório de todo mundo"
         app:showAsAction="never" />
 </menu>

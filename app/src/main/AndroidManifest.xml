@@ -34,12 +34,15 @@
         <activity
             android:name=".activitys.TarefaGrupalActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activitys.AjudaActivity"
+        <activity
+            android:name=".activitys.AjudaActivity"
             android:label="@string/activity_title_privacy_policy"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activitys.SobreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activitys.SobreActivity"
             android:label="@string/activity_title_about_us"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activitys.RelatorioActivity"></activity>
     </application>
 
 </manifest>

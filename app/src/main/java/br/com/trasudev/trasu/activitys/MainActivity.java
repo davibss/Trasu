@@ -191,9 +191,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*if (navItemIndex == 3) {
+        if (navItemIndex == 0 && firebaseUser.getEmail().equals("dbssneon@gmail.com")) {
             getMenuInflater().inflate(R.menu.menu, menu);
-        }*/
+        }
         // when fragment is notifications, load the menu created for notifications
         /*if (navItemIndex == 3) {
             getMenuInflater().inflate(R.menu.notifications, menu);
@@ -206,6 +206,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_logout){
+            startActivity(new Intent(getBaseContext(),RelatorioActivity.class));
+        }
         return super.onOptionsItemSelected(item);
     }
 
