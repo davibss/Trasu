@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
@@ -168,6 +169,15 @@ public class TabTarefaGrupalFragment extends Fragment implements
             @Override
             public void onBindViewHolder(MyViewHolder holder, final int position) {
                 super.onBindViewHolder(holder, position);
+                if (holder.prazo.getText().toString().equals("1")){
+                    holder.dias.setText("Dia restante");
+                }else if (holder.prazo.getText().toString().equals("0")){
+                    holder.dias.setText("Termina hoje");
+                }else if (holder.prazo.getText().toString().equals("-")){
+                    holder.dias.setText("Expirada");
+                }else{
+                    holder.dias.setText("Dias restantes");
+                }
                 holder.viewForeground.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -352,10 +362,39 @@ public class TabTarefaGrupalFragment extends Fragment implements
             //String name = cartList.get(viewHolder.getAdapterPosition()).getTar_nome();
 
             // backup of removed item for undo purpose
-            //final TarefaIndividual deletedItem = cartList.get(viewHolder.getAdapterPosition());
+            final TarefaGrupal deletedItem = cartList.get(viewHolder.getAdapterPosition());
             //final int deletedIndex = viewHolder.getAdapterPosition();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            if (deletedItem.getTar_status()==0&&!mAdapter.subtrairDatas(deletedItem).equals("0")){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Você ganhou "+new TarefaGrupal().equacaoPontos(
+                        mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
+                        cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
+                        .setCancelable(false)
+                        .setPositiveButton("Receber", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                new TarefaGrupal().finalizar(databaseReference, deletedItem,
+                                        firebaseUser, mAdapter.subtrairDatas(deletedItem));
+                                mAdapter.removeItem(position);
+                            }
+                        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //mAdapter.notifyItemRemoved(position +1);
+                        mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }else if (deletedItem.getTar_status()==1){
+                alert("Tarefa já finalizada");
+                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+            }else if (mAdapter.subtrairDatas(deletedItem).equals("0")){
+                alert("Tarefa expirada");
+                mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());
+            }
+
+            /*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Você ganhou "+new TarefaGrupal().equacaoPontos(
                     mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
                     cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
@@ -374,8 +413,12 @@ public class TabTarefaGrupalFragment extends Fragment implements
                         }
                     });
             AlertDialog alert = builder.create();
-            alert.show();
+            alert.show();*/
         }
+    }
+
+    private void alert(String msg) {
+        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     public interface OnFragmentInteractionListener {

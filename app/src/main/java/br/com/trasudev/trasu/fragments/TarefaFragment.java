@@ -297,6 +297,15 @@ public class TarefaFragment extends Fragment implements
             @Override
             public void onBindViewHolder(MyViewHolder holder, final int position) {
                 super.onBindViewHolder(holder, position);
+                if (holder.prazo.getText().toString().equals("1")){
+                    holder.dias.setText("Dia restante");
+                }else if (holder.prazo.getText().toString().equals("0")){
+                    holder.dias.setText("Termina hoje");
+                }else if (holder.prazo.getText().toString().equals("-")){
+                    holder.dias.setText("Expirada");
+                }else{
+                    holder.dias.setText("Dias restantes");
+                }
                 holder.viewForeground.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

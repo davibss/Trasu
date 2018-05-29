@@ -96,7 +96,7 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
         }
         if (dataAtual.before(dataFinal)){
             if (Integer.parseInt(subtrairDatas(item)) == 1){
-                holder.dias.setText("Dia restante");
+                //holder.dias.setText("Dia restante");
                 holder.thumbnail.setImageResource(R.drawable.ic_error_outline_orange_96dp);
             }else if (Integer.parseInt(subtrairDatas(item)) == 2){
                 holder.thumbnail.setImageResource(R.drawable.ic_error_outline_yellow_96dp);
@@ -105,13 +105,14 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.MyView
             }
             holder.prazo.setText(subtrairDatas(item));
         }else if (dataAtual.after(dataFinal)){
-            holder.dias.setText("Expirado");
+            //holder.dias.setText("Expirado");
             holder.thumbnail.setImageResource(R.drawable.ic_cancel_black_24dp);
-            holder.prazo.setText(subtrairDatas(item));
+            //holder.prazo.setText(subtrairDatas(item));
+            holder.prazo.setText("-");
         }else if (dataAtual.equals(dataFinal)){
             holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
             holder.prazo.setText("0");
-            holder.dias.setText("Termina hoje");
+            //holder.dias.setText("Termina hoje");
         }
 
     }
