@@ -175,7 +175,9 @@ public class RelatorioActivity extends AppCompatActivity {
                         cartList.clear();
                         for (DataSnapshot obj: dataSnapshot.getChildren()){
                             Usuario u = obj.getValue(Usuario.class);
-                            cartList.addAll(u.getTarefa_individual().values());
+                            if (u.getTarefa_individual() != null){
+                                cartList.addAll(u.getTarefa_individual().values());
+                            }
                         }
                         mAdapter.notifyDataSetChanged();
                         if (cartList.isEmpty()){
