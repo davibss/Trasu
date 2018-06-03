@@ -161,6 +161,7 @@ public class CadastrarActivity extends AppCompatActivity {
                                 }
                             });
                         }else {
+                            progressDialog.dismiss();
                             alert("Erro de cadastro");
                         }
                     }
