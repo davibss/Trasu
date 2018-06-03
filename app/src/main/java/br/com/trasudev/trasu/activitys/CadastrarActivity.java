@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,23 +15,45 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.Conexao;
+import br.com.trasudev.trasu.entidades.Usuario;
 import br.com.trasudev.trasu.mask.MaskEditTextChangedListener;
+
+import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
 
 public class CadastrarActivity extends AppCompatActivity {
     private EditText editNome,editTelefone,editDDD,editEmail,editSenha,editConfSenha;
     private Button btnCadastrar;
     private FirebaseAuth firebaseAuth;
+    FirebaseDatabase firebaseDatabase;
+    private FirebaseUser firebaseUser;
+    DatabaseReference databaseReference;
     private ProgressDialog progressDialog;
+
+    private void initFirebase() {
+        FirebaseApp.initializeApp(CadastrarActivity.this);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (!calledAlready) {
+            firebaseDatabase.setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+        databaseReference = firebaseDatabase.getReference();
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         firebaseAuth = Conexao.getFirebaseAuth();
+        initFirebase();
     }
 
     @Override
@@ -129,13 +152,10 @@ public class CadastrarActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    new Usuario().cadastrar(databaseReference,firebaseAuth.getUid(),editNome.getText().toString(),
+                                            editSenha.getText().toString(),editEmail.getText().toString(),
+                                            editDDD.getText().toString()+editTelefone.getText().toString());
                                     Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                                    Bundle params = new Bundle();
-                                    params.putString("nome", editNome.getText().toString());
-                                    params.putString("email",editEmail.getText().toString());
-                                    params.putString("telefone",editDDD.getText().toString()+editTelefone.getText().toString());
-                                    params.putString("senha",editSenha.getText().toString());
-                                    intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -145,5 +165,6 @@ public class CadastrarActivity extends AppCompatActivity {
                         }
                     }
                 });
+
     }
 }

@@ -51,12 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         if (firebaseUser == null){
             //
         }else{
-            Intent intent = new Intent();
-            Bundle args = getIntent().getExtras();
-            if (args != null) {
-                new Usuario().cadastrar(databaseReference,firebaseUser.getUid(),args.getString("nome"),
-                        args.getString("senha"),args.getString("email"),args.getString("telefone"));
-            }
+
         }
     }
 
@@ -169,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                             intent.putExtra("senha",senha);
                             btnLogin.setEnabled(true);
                             startActivity(intent);
+                            finish();
                         }else {
                             btnLogin.setEnabled(true);
                             progressDialog.dismiss();

@@ -587,7 +587,7 @@ public class GrupoFragment extends Fragment{
                         child("integrantes").child(userSelect.getUser_id()).
                         setValue(userSelect);
                 eventoDatabaseCardUsuario();
-                alert("Usuário adicionado");
+                alert("Integrante adicionado");
             }
         });
         eventoDatabaseCardUsuario();

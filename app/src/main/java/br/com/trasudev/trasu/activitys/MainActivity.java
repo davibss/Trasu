@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseUser = Conexao.getFirebaseUser();
         initFirebase();
         setPassword();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -178,15 +179,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setPassword() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                firebaseUser = Conexao.getFirebaseUser();
-                databaseReference.child("usuario").child(firebaseUser.getUid()).
-                        child("user_senha").setValue(getIntent().getStringExtra("senha"));
-            }
-        }).start();
-
+        Log.d("UUID",firebaseUser.getUid());
+        databaseReference.child("usuario").child(firebaseUser.getUid()).
+                child("user_senha").setValue(getIntent().getStringExtra("senha"));
     }
 
     @Override
@@ -411,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements
                                             @Override
                                             public void run() {
                                                 Conexao.logOut();
-                                                finish();
+                                                startActivity(new Intent(getBaseContext(), LoginActivity.class));
                                             }
                                         }).start();
                                     }
@@ -495,8 +490,8 @@ public class MainActivity extends AppCompatActivity implements
                 return;
             }
         }
-
-        super.onBackPressed();
+        /*super.onBackPressed();
+        startActivity(new Intent(getBaseContext(), LoginActivity.class));*/
     }
 
     @Override
