@@ -35,6 +35,8 @@
     <string name="tarPrazoText">Prazo</string>
     <string name="checkboxText">Deseja ativar notificação?</string>
     <string name="cadastrarTarText">Cadastrar</string>
+    <string name="ini">Início</string>
+    <string name="fin">Final</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

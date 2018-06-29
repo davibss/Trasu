@@ -91,30 +91,95 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RadioGroup>
-    <EditText
-        android:id="@+id/editTextTarPrazo"
+
+    <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="wrap_content"
-        android:hint="@string/tarPrazoText"
-        android:textSize="16sp"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:layout_constraintTop_toBottomOf="@id/prioridadeText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintHorizontal_bias="0.0"
-        android:inputType="number"
-        android:layout_height="wrap_content" />
+        app:layout_constraintVertical_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.0">
+        <EditText
+            android:id="@+id/editTextTarPrazo"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/tarPrazoText"
+            android:textSize="14sp"
+            android:singleLine="true"
+
+            android:inputType="number" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ini"
+        android:textSize="12sp"
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/editTextTarDataIni"
+        app:layout_constraintEnd_toEndOf="@id/editTextTarDataIni"
+        app:layout_constraintStart_toStartOf="@id/editTextTarDataIni"
+        app:layout_constraintTop_toTopOf="@id/editTextTarDataIni"
+        app:layout_constraintHorizontal_bias="0.0"/>
+
+    <EditText
+        android:id="@+id/editTextTarDataIni"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:textSize="16sp"
+        android:enabled="false"
+        android:paddingTop="5dp"
+        android:background="#00000000"
+        app:layout_constraintBottom_toBottomOf="@id/linear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/linear"
+        app:layout_constraintTop_toTopOf="@id/linear"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fin"
+        android:textSize="12sp"
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/editTextTarDataFin"
+        app:layout_constraintEnd_toEndOf="@id/editTextTarDataFin"
+        app:layout_constraintStart_toStartOf="@id/editTextTarDataFin"
+        app:layout_constraintTop_toTopOf="@id/editTextTarDataFin"
+        app:layout_constraintHorizontal_bias="0.0"/>
+
+    <EditText
+        android:id="@+id/editTextTarDataFin"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:enabled="false"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
+        android:paddingTop="5dp"
+        android:background="#00000000"
+        app:layout_constraintBottom_toBottomOf="@id/linear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/editTextTarDataIni"
+        app:layout_constraintTop_toTopOf="@id/linear"
+        app:layout_constraintHorizontal_bias="0.1" />
+
     <CheckBox
         android:id="@+id/checkBoxNotificacao"
         android:layout_width="wrap_content"
         android:text="@string/checkboxText"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/editTextTarPrazo"
+        app:layout_constraintTop_toBottomOf="@id/linear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.1"
         app:layout_constraintHorizontal_bias="0.0"
         android:textSize="14sp"
         android:layout_height="wrap_content" />
@@ -133,91 +198,5 @@
         android:text="@string/cadastrarTarText"
         android:textSize="16sp"
         android:layout_height="wrap_content" />
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/editTextTarNome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="16sp"
-                android:inputType="text"
-                android:hint="@string/tarNomeText" />
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_margin="8dp"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/editTextTarDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="5"
-                    android:gravity="top"
-                    android:textSize="16sp"
-                    android:hint="@string/tarDescText"
-                    android:ems="10"
-                    android:inputType="textMultiLine" />
-            </ScrollView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="@string/tarPrioridadeText"
-                android:layout_margin="8dp"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
-            <RadioGroup
-                android:id="@+id/radioGroup"
-                android:orientation="horizontal"
-                android:layout_margin="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:id="@+id/radioBaixa"
-                    android:text="@string/baixa"
-                    android:textSize="14sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioButton
-                    android:id="@+id/radioMedia"
-                    android:text="@string/media"
-                    android:textSize="14sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioButton
-                    android:id="@+id/radioAlta"
-                    android:textSize="14sp"
-                    android:text="@string/alta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </RadioGroup>
-            <EditText
-                android:id="@+id/editTextTarPrazo"
-                android:layout_width="wrap_content"
-                android:hint="@string/tarPrazoText"
-                android:textSize="16sp"
-                android:layout_margin="8dp"
-                android:inputType="number"
-                android:layout_height="wrap_content" />
-            <CheckBox
-                android:id="@+id/checkBoxNotificacao"
-                android:layout_width="wrap_content"
-                android:text="@string/checkboxText"
-                android:layout_margin="8dp"
-                android:textSize="14sp"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/btnCadastrarTar"
-                style="@style/buttonTheme"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_margin="8dp"
-                android:padding="10dp"
-                android:text="@string/cadastrarTarText"
-                android:textSize="16sp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>-->
 </android.support.constraint.ConstraintLayout>

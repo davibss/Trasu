@@ -43,6 +43,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -146,6 +147,9 @@ public class TarefaFragment extends Fragment implements
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        editDataIni.setText(format.format(new Date()));
         checkValue = "";
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -201,15 +205,21 @@ public class TarefaFragment extends Fragment implements
         editDescricao.setText(tarefa.getTar_descricao());
     }
 
-    private void alterarComponentesTarefa(View alertLayout, final TarefaIndividual tarefa){
+    private void alterarComponentesTarefa(View alertLayout, final TarefaIndividual tarefa) throws ParseException {
         final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
+        final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
+        final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         editNome.setText(tarefa.getTar_nome());
         editDescricao.setText(tarefa.getTar_descricao());
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+        editDataIni.setText(format2.format(format.parse(tarefa.getTar_dataInicial())));
+        editDataFin.setText(format2.format(format.parse(tarefa.getTar_dataFinal())));
         RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
         RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
         RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
@@ -482,7 +492,11 @@ public class TarefaFragment extends Fragment implements
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
-                    alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                    try {
+                        alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
                 alerta.dismiss();
             }
