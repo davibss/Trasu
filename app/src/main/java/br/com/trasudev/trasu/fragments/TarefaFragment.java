@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -211,15 +213,15 @@ public class TarefaFragment extends Fragment implements
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
+        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
         final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
-        final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
-        editNome.setText(tarefa.getTar_nome());
-        editDescricao.setText(tarefa.getTar_descricao());
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
         editDataIni.setText(format2.format(format.parse(tarefa.getTar_dataInicial())));
         editDataFin.setText(format2.format(format.parse(tarefa.getTar_dataFinal())));
+        editNome.setText(tarefa.getTar_nome());
+        editDescricao.setText(tarefa.getTar_descricao());
         RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
         RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
         RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
@@ -256,7 +258,6 @@ public class TarefaFragment extends Fragment implements
             }
         });
     }
-
     private void onClickEvent() {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -247,13 +247,19 @@ public class TarefaGrupalFragment extends Fragment {
         editDescricao.setText(tarefa.getTar_descricao());
     }
 
-    private void alterarComponentesTarefa(View alertLayout,final TarefaGrupal tarefa) {
+    private void alterarComponentesTarefa(View alertLayout,final TarefaGrupal tarefa) throws ParseException {
         final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
+        final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+        editDataIni.setText(format2.format(format.parse(tarefa.getTar_dataInicial())));
+        editDataFin.setText(format2.format(format.parse(tarefa.getTar_dataFinal())));
         RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
         RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
         RadioButton buttonBaixa = (RadioButton) group.findViewById(R.id.radioBaixa);
@@ -375,6 +381,9 @@ public class TarefaGrupalFragment extends Fragment {
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
+        final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        editDataIni.setText(format.format(new Date()));
         checkValue = "";
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -446,7 +455,11 @@ public class TarefaGrupalFragment extends Fragment {
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
-                    alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                    try {
+                        alterarComponentesTarefa(alertLayout, mAdapter.getItem(position));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 } else if (arg1 == 1){
                     LayoutInflater inflateDialog = getLayoutInflater();
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_realizadores, null);
