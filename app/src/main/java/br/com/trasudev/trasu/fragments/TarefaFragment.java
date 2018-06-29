@@ -393,7 +393,8 @@ public class TarefaFragment extends Fragment implements
 
             if (deletedItem.getTar_status()==0&&!mAdapter.subtrairDatas(deletedItem).equals("0")){
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
+                builder.setTitle("Nome: " + deletedItem.getTar_nome())
+                        .setMessage("Você ganhou "+new TarefaIndividual().equacaoPontos(
                         mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
                         cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
                         .setCancelable(false)
@@ -457,7 +458,8 @@ public class TarefaFragment extends Fragment implements
             public void onClick(DialogInterface arg0, int arg1) {
                 if (arg1 == 1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Deseja excluir a tarefa?")
+                    builder.setMessage("Nome: " + tarefa.getTar_nome())
+                            .setTitle("Deseja excluir a tarefa?")
                             .setCancelable(false)
                             .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

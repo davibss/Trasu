@@ -372,7 +372,7 @@ public class GrupoFragment extends Fragment{
                     View alertLayout = inflateDialog.inflate(R.layout.gerenciar_integrantes, null);
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     //alert.setTitle("Gerenciar integrantes");
-                    alert.setCustomTitle(customTitle(inflateDialog,"Gerenciar integrantes"));
+                    alert.setCustomTitle(customTitle(inflateDialog,"Gerenciar integrantes\n("+grupo.getGrp_nome()+")"));
                     alert.setView(alertLayout);
                     dialog = alert.create();
                     dialog.show();
@@ -380,7 +380,7 @@ public class GrupoFragment extends Fragment{
                     eventoAddRemove(grupo);
                 }else if (arg1 == itens.indexOf("Excluir grupo")){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Deseja realmente excluir o grupo?")
+                    builder.setTitle("Deseja realmente excluir o grupo ("+grupo.getGrp_nome()+")?")
                             .setCancelable(false)
                             .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

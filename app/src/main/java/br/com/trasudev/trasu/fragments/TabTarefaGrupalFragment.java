@@ -275,7 +275,8 @@ public class TabTarefaGrupalFragment extends Fragment implements
                 if (arg1 == 0){
                     LayoutInflater inflateDialog = getLayoutInflater();
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setTitle("Abandonar tarefa?");
+                    alert.setMessage("Nome: " + tarefa.getTar_nome())
+                         .setTitle("Abandonar tarefa?");
                     alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -367,7 +368,8 @@ public class TabTarefaGrupalFragment extends Fragment implements
 
             if (deletedItem.getTar_status()==0&&!mAdapter.subtrairDatas(deletedItem).equals("0")){
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Você ganhou "+new TarefaGrupal().equacaoPontos(
+                builder.setTitle("Nome: " + deletedItem.getTar_nome())
+                        .setMessage("Você ganhou "+new TarefaGrupal().equacaoPontos(
                         mAdapter.subtrairDatas(cartList.get(viewHolder.getAdapterPosition())),
                         cartList.get(viewHolder.getAdapterPosition()), false)+" pontos!")
                         .setCancelable(false)
