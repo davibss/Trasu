@@ -307,6 +307,10 @@ public class TabTarefaGrupalFragment extends Fragment implements
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
         final RadioGroup group = (RadioGroup) alertLayout.findViewById(R.id.radioGroup);
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
+        final TextView inicio = alertLayout.findViewById(R.id.inicio);
+        final TextView fim = alertLayout.findViewById(R.id.fim);
+        final EditText editInicio = alertLayout.findViewById(R.id.editTextTarDataIni);
+        final EditText editFim = alertLayout.findViewById(R.id.editTextTarDataFin);
         final TextView textView = alertLayout.findViewById(R.id.prioridadeText);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
@@ -319,6 +323,10 @@ public class TabTarefaGrupalFragment extends Fragment implements
         editDescricao.setKeyListener(null);
         group.setEnabled(false);
         editPrazo.setVisibility(View.GONE);
+        editInicio.setVisibility(View.GONE);
+        editFim.setVisibility(View.GONE);
+        inicio.setVisibility(View.GONE);
+        fim.setVisibility(View.GONE);
         checkBoxNotificacao.setVisibility(View.GONE);
         btnAlterar.setVisibility(View.GONE);
         buttonAlta.setVisibility(View.GONE);

@@ -17,8 +17,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.LoginFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,9 +152,35 @@ public class TarefaFragment extends Fragment implements
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
+        final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         editDataIni.setText(format.format(new Date()));
         checkValue = "";
+        editPrazo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int dias = Integer.parseInt(s.toString());
+                    Calendar a = Calendar.getInstance();
+                    a.setTime(new Date());
+                    a.add(Calendar.DAY_OF_YEAR,dias);
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    editDataFin.setText(format.format(a.getTime()));
+                }else{
+                    editDataFin.setText("dd/MM/aaaa");
+                }
+            }
+        });
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -188,6 +216,10 @@ public class TarefaFragment extends Fragment implements
         final EditText editPrazo = (EditText) alertLayout.findViewById(R.id.editTextTarPrazo);
         final CheckBox checkBoxNotificacao = (CheckBox) alertLayout.findViewById(R.id.checkBoxNotificacao);
         final TextView textView = alertLayout.findViewById(R.id.prioridadeText);
+        final TextView inicio = alertLayout.findViewById(R.id.inicio);
+        final TextView fim = alertLayout.findViewById(R.id.fim);
+        final EditText editInicio = alertLayout.findViewById(R.id.editTextTarDataIni);
+        final EditText editFim = alertLayout.findViewById(R.id.editTextTarDataFin);
         final Button btnAlterar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         RadioButton buttonAlta = (RadioButton) group.findViewById(R.id.radioAlta);
         RadioButton buttonMedia = (RadioButton) group.findViewById(R.id.radioMedia);
@@ -198,6 +230,10 @@ public class TarefaFragment extends Fragment implements
         editDescricao.setKeyListener(null);
         group.setVisibility(View.GONE);
         editPrazo.setVisibility(View.GONE);
+        editInicio.setVisibility(View.GONE);
+        editFim.setVisibility(View.GONE);
+        inicio.setVisibility(View.GONE);
+        fim.setVisibility(View.GONE);
         checkBoxNotificacao.setVisibility(View.GONE);
         btnAlterar.setVisibility(View.GONE);
         buttonAlta.setVisibility(View.GONE);
@@ -216,8 +252,37 @@ public class TarefaFragment extends Fragment implements
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
         final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+        editPrazo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int dias = Integer.parseInt(s.toString());
+                    Calendar a = Calendar.getInstance();
+                    try {
+                        a.setTime(format.parse(tarefa.getTar_dataInicial()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    a.add(Calendar.DAY_OF_YEAR,dias);
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    editDataFin.setText(format.format(a.getTime()));
+                }else{
+                    editDataFin.setText("dd/MM/aaaa");
+                }
+            }
+        });
         editDataIni.setText(format2.format(format.parse(tarefa.getTar_dataInicial())));
         editDataFin.setText(format2.format(format.parse(tarefa.getTar_dataFinal())));
         editNome.setText(tarefa.getTar_nome());
