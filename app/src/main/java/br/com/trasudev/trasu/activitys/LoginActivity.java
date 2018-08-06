@@ -1,12 +1,18 @@
 package br.com.trasudev.trasu.activitys;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +31,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.entidades.Usuario;
@@ -40,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     public static boolean calledAlready = false;
-    private static String[] contatos;
     private ProgressDialog progressDialog;
 
     @Override
@@ -183,6 +191,51 @@ public class LoginActivity extends AppCompatActivity {
         if (progressDialog != null){
             progressDialog.dismiss();
         }
+    }
+
+    public ArrayList<String> getContactList(Context context) {
+        ContentResolver cr = context.getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+
+        if ((cur != null ? cur.getCount() : 0) > 0) {
+            ArrayList<String> phoneList = new ArrayList<>();
+            ArrayList<String> phoneList2 = new ArrayList<>();
+            while (cur != null && cur.moveToNext()) {
+                String id = cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(
+                        ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        phoneList.add(phoneNo.replaceAll("[^0-9]",""));
+                    }
+                    pCur.close();
+                }
+            }
+            Collections.sort(phoneList);
+            for (int i=0;i<phoneList.size();i++){
+                if (i!=0 && phoneList.get(i-1).equals(phoneList.get(i))){
+                    //
+                }else{
+                    phoneList2.add(phoneList.get(i));
+                    //Log.i(TAG,phoneList.get(i));
+                }
+            }
+            return phoneList2;
+        }
+        if(cur!=null){
+            cur.close();
+        }
+        return null;
     }
 
     private void alert(String msg) {

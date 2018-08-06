@@ -2,6 +2,7 @@ package br.com.trasudev.trasu.activitys;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -120,6 +121,15 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         firebaseUser = Conexao.getFirebaseUser();
         verificarUser();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoginActivity login = new LoginActivity();
+                if (login.getContactList(getBaseContext()).contains("991170210")){
+                    Log.d("TAGCONTATOS","AEEEKRL");
+                }
+            }
+        });
     }
 
     private void initFirebase() {
