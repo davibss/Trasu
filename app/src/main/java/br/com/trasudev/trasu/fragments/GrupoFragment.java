@@ -99,6 +99,8 @@ public class GrupoFragment extends Fragment{
     private List<Usuario> cartListIntegrante;
     private CartUserAdapter mAdapterIntegrante;
 
+    private TextView textUsuario,textIntegrante;
+
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -522,6 +524,23 @@ public class GrupoFragment extends Fragment{
             RECYCLER VIEW DOS INTEGRANTES
          */
         recyclerViewIntegrante = alertLayout.findViewById(R.id.scrollIntegrantes);
+        recyclerViewUser = alertLayout.findViewById(R.id.scrollUsuarios);
+        textUsuario = alertLayout.findViewById(R.id.textUsuarios);
+        textIntegrante = alertLayout.findViewById(R.id.textIntegrantes);
+        textUsuario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewIntegrante.setVisibility(View.GONE);
+                recyclerViewUser.setVisibility(View.VISIBLE);
+            }
+        });
+        textIntegrante.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewIntegrante.setVisibility(View.VISIBLE);
+                recyclerViewUser.setVisibility(View.GONE);
+            }
+        });
         cartListIntegrante = new ArrayList<>();
         mAdapterIntegrante = new CartUserAdapter(getActivity(), cartListIntegrante){
             @Override
@@ -557,7 +576,6 @@ public class GrupoFragment extends Fragment{
         /*
             RECYCLER VIEW DOS USUÁRIOS
          */
-        recyclerViewUser = alertLayout.findViewById(R.id.scrollUsuarios);
         cartListUsuario = new ArrayList<>();
         mAdapterUsuario = new CartUserAdapter(getActivity(), cartListUsuario){
             @Override
@@ -581,7 +599,7 @@ public class GrupoFragment extends Fragment{
                 userSelect.setUser_id(item.getUser_id());
                 userSelect.setUser_nome(item.getUser_nome());
                 userSelect.setUser_email(item.getUser_email());
-                eventoDatabaseCardIntegrante(grupo);
+                //eventoDatabaseCardIntegrante(grupo);
                 mAdapterUsuario.removeItem(position);
                 databaseReference.child("grupo").child(grupo.getGrp_id()).
                         child("integrantes").child(userSelect.getUser_id()).
@@ -603,7 +621,7 @@ public class GrupoFragment extends Fragment{
                     Usuario u = obj.getValue(Usuario.class);
                     if (!u.getUser_id().equals(firebaseUser.getUid())) {
                         cartListIntegrante.add(u);
-                        mAdapterIntegrante.notifyDataSetChanged();
+                        //mAdapterIntegrante.notifyDataSetChanged();
                     }
                 }
             }

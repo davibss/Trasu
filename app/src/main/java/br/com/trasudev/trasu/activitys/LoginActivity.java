@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     public static boolean calledAlready = false;
+    private static String[] contatos;
     private ProgressDialog progressDialog;
 
     @Override
