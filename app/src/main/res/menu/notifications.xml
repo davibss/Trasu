@@ -2,14 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_mark_all_read"
-        android:orderInCategory="100"
-        android:title="@string/action_mark_all_read"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_clear_notifications"
-        android:orderInCategory="101"
+        android:icon="@drawable/ic_sort_white_24dp"
         android:title="@string/action_clear_all"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/ordenarAZ"
+                android:title="@string/menuAZ"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/ordenarData"
+                android:title="@string/menuDATA"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/ordenarPrioridade"
+                android:title="@string/menuPrioridade"
+                app:showAsAction="ifRoom" />
+            <item
+                android:id="@+id/ordenarFinalizadas"
+                android:title="@string/menuFinalizada"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 </menu>

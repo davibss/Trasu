@@ -101,6 +101,7 @@ public class GrupoFragment extends Fragment{
 
     private TextView textUsuario,textIntegrante;
 
+    private ArrayList<String> numeroContatos;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -139,6 +140,7 @@ public class GrupoFragment extends Fragment{
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            numeroContatos = getArguments().getStringArrayList("arraylist");
         }
     }
 
@@ -648,8 +650,11 @@ public class GrupoFragment extends Fragment{
                         }
                     }
                     if (!add&&!u.getUser_id().equals(firebaseUser.getUid())){
-                        cartListUsuario.add(u);
-                        mAdapterUsuario.notifyDataSetChanged();
+                        String numero = u.getUser_telefone().replaceAll("[^0-9]","");
+                        if (numeroContatos.contains(numero)){
+                            cartListUsuario.add(u);
+                            mAdapterUsuario.notifyDataSetChanged();
+                        }
                     }
                 }
             }

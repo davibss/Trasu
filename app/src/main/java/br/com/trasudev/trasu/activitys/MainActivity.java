@@ -2,11 +2,14 @@ package br.com.trasudev.trasu.activitys;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -20,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,6 +56,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.com.trasudev.trasu.R;
@@ -101,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements
     // index to identify current nav menu item
     public static int navItemIndex = 0;
 
+    private ArrayList<String> listaContatos;
+
     // tags used to attach the fragments
     private static final String TAG_TAREFA = "tarefa";
     private static final String TAG_PHOTOS = "photos";
@@ -121,15 +128,57 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         firebaseUser = Conexao.getFirebaseUser();
         verificarUser();
-        runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                LoginActivity login = new LoginActivity();
-                if (login.getContactList(getBaseContext()).contains("991170210")){
-                    Log.d("TAGCONTATOS","AEEEKRL");
+                listaContatos = getContactList(getBaseContext());
+            }
+        }).start();
+    }
+
+    public ArrayList<String> getContactList(Context context) {
+        ContentResolver cr = context.getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+
+        if ((cur != null ? cur.getCount() : 0) > 0) {
+            ArrayList<String> phoneList = new ArrayList<>();
+            ArrayList<String> phoneList2 = new ArrayList<>();
+            while (cur != null && cur.moveToNext()) {
+                String id = cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(
+                        ContactsContract.Contacts.DISPLAY_NAME));
+
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        phoneList.add(phoneNo.replaceAll("[^0-9]",""));
+                    }
+                    pCur.close();
                 }
             }
-        });
+            Collections.sort(phoneList);
+            for (int i=0;i<phoneList.size();i++){
+                if (i!=0 && phoneList.get(i-1).equals(phoneList.get(i))){
+                    //
+                }else{
+                    phoneList2.add(phoneList.get(i));
+                    //Log.i(TAG,phoneList.get(i));
+                }
+            }
+            return phoneList2;
+        }
+        if(cur!=null){
+            cur.close();
+        }
+        return null;
     }
 
     private void initFirebase() {
@@ -194,28 +243,52 @@ public class MainActivity extends AppCompatActivity implements
                 child("user_senha").setValue(getIntent().getStringExtra("senha"));
     }
 
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // when fragment is notifications, load the menu created for notifications
+        if (navItemIndex == 0) {
+            getMenuInflater().inflate(R.menu.notifications, menu);
+        }
+        return true;
+    }*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*if (navItemIndex == 0 && firebaseUser.getEmail().equals("dbssneon@gmail.com")) {
-            getMenuInflater().inflate(R.menu.menu, menu);
-        }*/
-        // when fragment is notifications, load the menu created for notifications
-        /*if (navItemIndex == 3) {
-            getMenuInflater().inflate(R.menu.notifications, menu);
-        }*/
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.notifications, menu);
         return true;
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*int id = item.getItemId();
-        if (id == R.id.action_logout){
-            startActivity(new Intent(getBaseContext(),RelatorioActivity.class));
-        }*/
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.ordenarAZ:
+                // Do Activity menu item stuff here
+                return false;
+            case R.id.ordenarData:
+                // Not implemented here
+                return false;
+            case R.id.ordenarPrioridade:
+                return false;
+            case R.id.ordenarFinalizadas:
+                return false;
+            default:
+                break;
+        }
+        return false;
     }
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.ordenarAZ){
+            Toast.makeText(getBaseContext(),"AZ", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.ordenarData){
+            Toast.makeText(getBaseContext(),"DATA", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.ordenarPrioridade){
+            Toast.makeText(getBaseContext(),"PRIO", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
+    }*/
 
     @Override
     protected void onStop() {
@@ -343,15 +416,21 @@ public class MainActivity extends AppCompatActivity implements
                 HomeFragmentTab homeFragmentTab = new HomeFragmentTab();
                 return homeFragmentTab;
             case 1:
-                // photos
+                // grupo
+                Bundle args1 = new Bundle();
+                args1.putStringArrayList("arraylist",listaContatos);
                 GrupoFragment grupoFragment = new GrupoFragment();
+                grupoFragment.setArguments(args1);
                 return grupoFragment;
             case 2:
-                // movies fragment
+                // contato fragment
+                Bundle args = new Bundle();
+                args.putStringArrayList("arraylist",listaContatos);
                 ContatoFragment contatoFragment = new ContatoFragment();
+                contatoFragment.setArguments(args);
                 return contatoFragment;
             case 3:
-                // notifications fragment
+                // perfil fragment
                 PerfilFragment perfilFragment = new PerfilFragment();
                 return perfilFragment;
             case 4:

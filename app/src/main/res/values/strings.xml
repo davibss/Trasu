@@ -114,4 +114,11 @@
 
     <string name="sobreActivity">Aplicativo desenvolvido por André Luís e Davi Barbosa
         para o Trabalho de Conclusão de Curso do 3º Ano de Informática do Instituto Federal de Sergipe</string>
+
+    <!--region Textos dos menus-->
+    <string name="menuAZ">A-Z</string>
+    <string name="menuDATA">Menor prazo</string>
+    <string name="menuPrioridade">Maior prioridade</string>
+    <string name="menuFinalizada">Tarefas finalizadas</string>
+    <!--endregion-->
 </resources>

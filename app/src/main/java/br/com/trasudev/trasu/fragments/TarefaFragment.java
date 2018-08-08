@@ -23,6 +23,9 @@ import android.text.LoginFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -63,6 +66,7 @@ import br.com.trasudev.trasu.classes.TarefaAdapter;
 import br.com.trasudev.trasu.entidades.TarefaIndividual;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
+import static br.com.trasudev.trasu.activitys.MainActivity.navItemIndex;
 
 
 public class TarefaFragment extends Fragment implements
@@ -130,6 +134,7 @@ public class TarefaFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -137,6 +142,37 @@ public class TarefaFragment extends Fragment implements
         firebaseUser = Conexao.getFirebaseUser();
         verificarUser();
         initFirebase();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ordenarAZ:
+                // Not implemented here
+                /*alert("AZ");*/
+                eventoDatabaseCard(1);
+                return true;
+            case R.id.ordenarData:
+                // Do Fragment menu item stuff here
+                /*alert("DATA");*/
+                eventoDatabaseCard(2);
+                return true;
+            case R.id.ordenarPrioridade:
+                /*alert("PRIORIDADE");*/
+                eventoDatabaseCard(3);
+                return true;
+            case R.id.ordenarFinalizadas:
+                eventoDatabaseCard(4);
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 
     private void inicializarComponentes(View rootView){
@@ -409,10 +445,10 @@ public class TarefaFragment extends Fragment implements
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT,
                 this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        eventoDatabaseCard();
+        eventoDatabaseCard(2);
     }
 
-    private void eventoDatabaseCard() {
+    private void eventoDatabaseCard(final int menu) {
         databaseReference.child("usuario").child(firebaseUser.getUid()).
                 child("tarefa_individual").
                 addValueEventListener(new ValueEventListener() {
@@ -421,20 +457,49 @@ public class TarefaFragment extends Fragment implements
                 cartList.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     TarefaIndividual p = obj.getValue(TarefaIndividual.class);
-                    if (p.getTar_status()==0) {
+                    if (menu == 4){
+                        if (p.getTar_status()==1){
                         cartList.add(p);
+                        }
+                    }else{
+                        if (p.getTar_status()==0) {
+                            cartList.add(p);
+                        }
                     }
                 }
                 mAdapter.notifyDataSetChanged();
                 if (cartList.isEmpty()){
                     textView.setVisibility(View.VISIBLE);
-                }else{
+                }else if (menu == 2){
                     textView.setVisibility(View.INVISIBLE);
                     Collections.sort(cartList, new Comparator<TarefaIndividual>() {
                         @Override
                         public int compare(TarefaIndividual o1, TarefaIndividual o2) {
                             return converterData(o1.getTar_dataFinal()).
                                     compareTo(converterData(o2.getTar_dataFinal()));
+                        }
+                    });
+                }else if (menu == 1){
+                    textView.setVisibility(View.INVISIBLE);
+                    Collections.sort(cartList, new Comparator<TarefaIndividual>() {
+                        @Override
+                        public int compare(TarefaIndividual o1, TarefaIndividual o2) {
+                            return o1.getTar_nome().compareTo(o2.getTar_nome());
+                        }
+                    });
+                }else if (menu ==3){
+                    textView.setVisibility(View.INVISIBLE);
+                    Collections.sort(cartList, new Comparator<TarefaIndividual>() {
+                        @Override
+                        public int compare(TarefaIndividual o1, TarefaIndividual o2) {
+                            if (o1.getTar_prioridade().equals("Alta") &&
+                                    o2.getTar_prioridade().equals("Média")){
+                                return -1;
+                            }else if (o1.getTar_prioridade().equals("Média") &&
+                                    o2.getTar_prioridade().equals("Baixa")){
+                                return -1;
+                            }
+                            return 0;
                         }
                     });
                 }

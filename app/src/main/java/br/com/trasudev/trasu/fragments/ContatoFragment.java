@@ -178,6 +178,7 @@ public class ContatoFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            numeroContatos = getArguments().getStringArrayList("arraylist");
         }
     }
 
@@ -212,7 +213,8 @@ public class ContatoFragment extends Fragment {
         recyclerViewIntegrante.setItemAnimator(new DefaultItemAnimator());
         recyclerViewIntegrante.setAdapter(mAdapterIntegrante);
         recyclerViewIntegrante.setLongClickable(true);
-        startContatos();
+        /*startContatos();*/
+        eventoDatabaseCard();
     }
 
     private void startContatos(){
@@ -232,25 +234,9 @@ public class ContatoFragment extends Fragment {
                 cartListIntegrante.clear();
                 for (DataSnapshot obj: dataSnapshot.getChildren()){
                     Usuario u = obj.getValue(Usuario.class);
-                    if (!u.getUser_id().equals(firebaseUser.getUid())) {
-                        for (String numbers : numeroContatos) {
-                            String numero = u.getUser_telefone().replaceAll("[^0-9]","");
-                            if (numero.length() == 13){
-                                numero = numero.substring(0,4) +
-                                        numero.substring(5,13);
-                                Log.d(TAG+"INTERNO",numbers);
-                                Log.d(TAG+"FIREBASE",numero);
-                                if (numero.equals(numbers)){
-                                    cartListIntegrante.add(u);
-                                }
-                            }else{
-                                if (u.getUser_telefone().replaceAll("[^0-9]","").
-                                        equals(numbers)){
-                                    cartListIntegrante.add(u);
-                                }
-                            }
-
-                        }
+                    String numero = u.getUser_telefone().replaceAll("[^0-9]","");
+                    if (numeroContatos.contains(numero)){
+                        cartListIntegrante.add(u);
                     }
                 }
                 mAdapterIntegrante.notifyDataSetChanged();
