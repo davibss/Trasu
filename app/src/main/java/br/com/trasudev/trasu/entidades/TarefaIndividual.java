@@ -1,5 +1,9 @@
 package br.com.trasudev.trasu.entidades;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +21,7 @@ import java.util.UUID;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
+import br.com.trasudev.trasu.classes.AlarmNotificationReceiver;
 
 import static br.com.trasudev.trasu.activitys.MainActivity.txtPontos;
 

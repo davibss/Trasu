@@ -44,6 +44,7 @@
             android:label="@string/activity_title_about_us"
             android:screenOrientation="portrait" />
         <activity android:name=".activitys.RelatorioActivity"></activity>
+        <receiver android:name=".classes.AlarmNotificationReceiver"/>
     </application>
 
 </manifest>

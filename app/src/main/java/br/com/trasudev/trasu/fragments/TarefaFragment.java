@@ -1,6 +1,8 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,6 +60,7 @@ import java.util.List;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
+import br.com.trasudev.trasu.classes.AlarmNotificationReceiver;
 import br.com.trasudev.trasu.classes.CartListAdapter;
 import br.com.trasudev.trasu.classes.Conexao;
 import br.com.trasudev.trasu.classes.RecyclerItemClickListener;
@@ -86,6 +89,10 @@ public class TarefaFragment extends Fragment implements
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public static String titulo;
+    public static String contexto;
+    public static String prioridade;
 
     private String mParam1;
     private String mParam2;
@@ -234,6 +241,10 @@ public class TarefaFragment extends Fragment implements
                         Integer.parseInt(editPrazo.getText().toString()) > 365){
                     alert("O prazo deve estar entre 0 e 365 dias");
                 } else{
+                    if (checkBoxNotificacao.isChecked()){
+                        notificar(Integer.parseInt(editPrazo.getText().toString()), "Nome: "+editNome.getText().toString(),
+                                "Falta 1 hora para acabar o prazo!",checkValue);
+                    }
                     new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
                             editDescricao.getText().toString(),checkValue,
                             Integer.parseInt(editPrazo.getText().toString()),firebaseUser.getUid(),
@@ -243,6 +254,25 @@ public class TarefaFragment extends Fragment implements
                 }
             }
         });
+    }
+
+    private void notificar(int prazo, String tit, String desc, String prio) {
+        titulo = tit;
+        contexto = desc;
+        prioridade = prio;
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_YEAR,prazo);
+        if (prazo == 0){
+            c.add(Calendar.HOUR,1);
+            alert("Alerta agendado para 1 hora");
+        }else{
+            c.add(Calendar.HOUR,-1);
+            alert("Alerta agendado para "+prazo+" dias");
+        }
+        AlarmManager manager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent = new Intent(getActivity(),AlarmNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,myIntent,0);
+        manager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
     }
 
     private void visualizarTarefa(View alertLayout, final TarefaIndividual tarefa){
@@ -359,6 +389,7 @@ public class TarefaFragment extends Fragment implements
             }
         });
     }
+
     private void onClickEvent() {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
