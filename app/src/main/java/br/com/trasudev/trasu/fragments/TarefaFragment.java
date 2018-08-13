@@ -146,7 +146,7 @@ public class TarefaFragment extends Fragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.notifications, menu);
     }
 
     @Override

@@ -108,7 +108,7 @@ public class CartListGrupalAdapter extends RecyclerView.Adapter<CartListGrupalAd
         }else if (dataAtual.after(dataFinal)){
             //holder.dias.setText("Expirado");
             holder.thumbnail.setImageResource(R.drawable.ic_cancel_black_24dp);
-            holder.prazo.setText(subtrairDatas(item));
+            holder.prazo.setText("-");
         }else if (dataAtual.equals(dataFinal)){
             holder.thumbnail.setImageResource(R.drawable.ic_error_outline_red_96dp);
             holder.prazo.setText("0");

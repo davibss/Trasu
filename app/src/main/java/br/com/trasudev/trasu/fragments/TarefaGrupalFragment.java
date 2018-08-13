@@ -539,7 +539,8 @@ public class TarefaGrupalFragment extends Fragment {
                     gerenciarRealizadoresGrupo(alertLayout,grupo,tarefa);
                 } else if (arg1 == 2){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("Deseja excluir a tarefa?")
+                    builder.setTitle("Deseja excluir a tarefa?")
+                            .setMessage("Nome: " + tarefa.getTar_nome())
                             .setCancelable(false)
                             .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

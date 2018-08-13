@@ -14,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -127,6 +130,7 @@ public class TabTarefaGrupalFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -134,6 +138,37 @@ public class TabTarefaGrupalFragment extends Fragment implements
         firebaseUser = Conexao.getFirebaseUser();
         verificarUser();
         initFirebase();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.notifications, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ordenarAZ:
+                // Not implemented here
+                /*alert("AZ");*/
+                eventoDatabaseCard(1);
+                return true;
+            case R.id.ordenarData:
+                // Do Fragment menu item stuff here
+                /*alert("DATA");*/
+                eventoDatabaseCard(2);
+                return true;
+            case R.id.ordenarPrioridade:
+                /*alert("PRIORIDADE");*/
+                eventoDatabaseCard(3);
+                return true;
+            case R.id.ordenarFinalizadas:
+                eventoDatabaseCard(4);
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -206,11 +241,11 @@ public class TabTarefaGrupalFragment extends Fragment implements
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemGrupalClickListener(0, ItemTouchHelper.LEFT,
                 this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        eventoDatabaseCard();
-        eventoDatabaseCard();
+        eventoDatabaseCard(2);
+        //eventoDatabaseCard();
     }
 
-    private void eventoDatabaseCard() {
+    private void eventoDatabaseCard(final int menu) {
         databaseReference.child("grupo").
                 addValueEventListener(new ValueEventListener() {
                     @Override
@@ -222,9 +257,18 @@ public class TabTarefaGrupalFragment extends Fragment implements
                                 for (TarefaGrupal tg : g.getTarefa_grupal().values()) {
                                     if (tg.getRealiza()!= null) {
                                         for (Realiza realiza : tg.getRealiza().values()) {
-                                            if (realiza.getRea_user_id().equals(firebaseUser.getUid())&&
-                                                    realiza.getRea_status()==0){
-                                                cartList.add(tg);
+                                            if (realiza.getRea_user_id().equals(firebaseUser.getUid())/*&&
+                                                    realiza.getRea_status()==0*/) {
+                                                //cartList.add(tg);
+                                                if (menu == 4) {
+                                                    if (realiza.getRea_status() == 1) {
+                                                        cartList.add(tg);
+                                                    }
+                                                } else {
+                                                    if (realiza.getRea_status() == 0) {
+                                                        cartList.add(tg);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -234,13 +278,36 @@ public class TabTarefaGrupalFragment extends Fragment implements
                         mAdapter.notifyDataSetChanged();
                         if (cartList.isEmpty()){
                             textView.setVisibility(View.VISIBLE);
-                        }else{
+                        }else if (menu == 2){
                             textView.setVisibility(View.INVISIBLE);
                             Collections.sort(cartList, new Comparator<TarefaGrupal>() {
                                 @Override
                                 public int compare(TarefaGrupal o1, TarefaGrupal o2) {
                                     return converterData(o1.getTar_dataFinal()).
                                             compareTo(converterData(o2.getTar_dataFinal()));
+                                }
+                            });
+                        }else if (menu == 1){
+                            textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal>() {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    return o1.getTar_nome().compareTo(o2.getTar_nome());
+                                }
+                            });
+                        }else if (menu ==3){
+                            textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal>() {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    if (o1.getTar_prioridade().equals("Alta") &&
+                                            o2.getTar_prioridade().equals("Média")){
+                                        return -1;
+                                    }else if (o1.getTar_prioridade().equals("Média") &&
+                                            o2.getTar_prioridade().equals("Baixa")){
+                                        return -1;
+                                    }
+                                    return 0;
                                 }
                             });
                         }

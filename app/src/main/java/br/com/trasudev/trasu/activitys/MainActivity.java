@@ -245,20 +245,12 @@ public class MainActivity extends AppCompatActivity implements
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // when fragment is notifications, load the menu created for notifications
-        if (navItemIndex == 0) {
-            getMenuInflater().inflate(R.menu.notifications, menu);
-        }
+        *//*MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.notifications, menu);*//*
         return true;
     }*/
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.notifications, menu);
-        return true;
-    }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ordenarAZ:
@@ -275,19 +267,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
         return false;
-    }
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.ordenarAZ){
-            Toast.makeText(getBaseContext(),"AZ", Toast.LENGTH_SHORT).show();
-        }else if (id == R.id.ordenarData){
-            Toast.makeText(getBaseContext(),"DATA", Toast.LENGTH_SHORT).show();
-        }else if (id == R.id.ordenarPrioridade){
-            Toast.makeText(getBaseContext(),"PRIO", Toast.LENGTH_SHORT).show();
-        }
-        return super.onOptionsItemSelected(item);
     }*/
 
     @Override
