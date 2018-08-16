@@ -33,7 +33,7 @@
     <string name="media">Média</string>
     <string name="baixa">Baixa</string>
     <string name="tarPrazoText">Prazo</string>
-    <string name="checkboxText">Deseja ativar notificação?</string>
+    <string name="checkboxText">Ativar notificação?</string>
     <string name="cadastrarTarText">Cadastrar</string>
     <string name="ini">Início</string>
     <string name="fin">Final</string>

@@ -129,13 +129,24 @@
                 android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
-    <CheckBox
-        android:id="@+id/checkBoxNotificacao"
-        android:layout_width="wrap_content"
-        android:text="@string/checkboxText"
-        android:layout_margin="8dp"
-        android:textSize="14sp"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:id="@+id/checkBoxNotificacao"
+            android:layout_width="wrap_content"
+            android:text="@string/checkboxText"
+            android:layout_margin="8dp"
+            android:textSize="14sp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/textViewAjuda"
+            android:text=""
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     <Button
         android:id="@+id/btnCadastrarTar"
         android:layout_gravity="center_horizontal"

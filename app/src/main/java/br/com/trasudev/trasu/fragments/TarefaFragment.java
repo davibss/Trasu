@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,12 +34,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
@@ -187,6 +190,46 @@ public class TarefaFragment extends Fragment implements
         textView = rootView.findViewById(R.id.textViewNothing);
     }
 
+    private void conditionNotification (final CheckBox checkBox, final TextView textView, final EditText editPrazo){
+        Calendar mcurrentTime = Calendar.getInstance();
+        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        final int minuto = mcurrentTime.get(Calendar.MINUTE);
+        if (checkBox.isChecked()){
+            final TimePickerDialog timePickerDialog;
+            timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    if (Integer.parseInt(editPrazo.getText().toString()) == 0){
+                        if (hourOfDay*60 + minute < hour * 60 + minuto){
+                            alert("Não pode notificar no passado!");
+                            checkBox.setChecked(false);
+                        }else{
+                            if (minute <10){
+                                textView.setText("Horário: "+hourOfDay+":"+"0"+minute);
+                            }else{
+                                textView.setText("Horário: "+hourOfDay+":"+minute);
+                            }
+                        }
+                    }else{
+                        if (minute <10){
+                            textView.setText("Horário: "+hourOfDay+":"+"0"+minute);
+                        }else{
+                            textView.setText("Horário: "+hourOfDay+":"+minute);
+                        }
+                    }
+                }
+            },hour,minuto,true);
+            timePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    checkBox.setChecked(false);
+                }
+            });
+            timePickerDialog.setTitle("Escolha o horário");
+            timePickerDialog.show();
+        }
+    }
+
     private void inicializarComponentesTarefa(View alertLayout) {
         final EditText editNome = alertLayout.findViewById(R.id.editTextTarNome);
         final EditText editDescricao = alertLayout.findViewById(R.id.editTextTarDesc);
@@ -196,9 +239,24 @@ public class TarefaFragment extends Fragment implements
         final Button btnCadastrar = (Button) alertLayout.findViewById(R.id.btnCadastrarTar);
         final EditText editDataIni = alertLayout.findViewById(R.id.editTextTarDataIni);
         final EditText editDataFin = alertLayout.findViewById(R.id.editTextTarDataFin);
+        final TextView textView = alertLayout.findViewById(R.id.textViewAjuda);
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         editDataIni.setText(format.format(new Date()));
         checkValue = "";
+        checkBoxNotificacao.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (editPrazo.getText().toString().isEmpty()){
+                    checkBoxNotificacao.setChecked(false);
+                    alert("Coloque um prazo antes de notificar!");
+                }else{
+                    conditionNotification(checkBoxNotificacao,textView,editPrazo);
+                }
+                if (!isChecked){
+                    textView.setText("");
+                }
+            }
+        });
         editPrazo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -243,7 +301,7 @@ public class TarefaFragment extends Fragment implements
                 } else{
                     if (checkBoxNotificacao.isChecked()){
                         notificar(Integer.parseInt(editPrazo.getText().toString()), "Nome: "+editNome.getText().toString(),
-                                "Falta 1 hora para acabar o prazo!",checkValue);
+                                editDescricao.getText().toString(),checkValue, textView.getText().toString());
                     }
                     new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
                             editDescricao.getText().toString(),checkValue,
@@ -256,19 +314,18 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
-    private void notificar(int prazo, String tit, String desc, String prio) {
+    private void notificar(int prazo, String tit, String desc, String prio, String horario) {
         titulo = tit;
         contexto = desc;
         prioridade = prio;
+        String hora = horario.substring(9,11);
+        String minuto = horario.substring(12,14);
         Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
         c.add(Calendar.DAY_OF_YEAR,prazo);
-        if (prazo == 0){
-            c.add(Calendar.HOUR,1);
-            alert("Alerta agendado para 1 hora");
-        }else{
-            c.add(Calendar.HOUR,-1);
-            alert("Alerta agendado para "+prazo+" dias");
-        }
+        c.set(Calendar.HOUR_OF_DAY,Integer.parseInt(hora));
+        c.set(Calendar.MINUTE,Integer.parseInt(minuto));
+        c.set(Calendar.SECOND,0);
         AlarmManager manager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = new Intent(getActivity(),AlarmNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,myIntent,0);
