@@ -204,18 +204,12 @@ public class TarefaFragment extends Fragment implements
                             alert("Não pode notificar no passado!");
                             checkBox.setChecked(false);
                         }else{
-                            if (minute <10){
-                                textView.setText("Horário: "+hourOfDay+":"+"0"+minute);
-                            }else{
-                                textView.setText("Horário: "+hourOfDay+":"+minute);
-                            }
+                            textView.setText("Horário: " +(hourOfDay < 10 ? "0" : "")+hourOfDay+
+                                    ":"+(minute < 10 ? "0" : "")+minute);
                         }
                     }else{
-                        if (minute <10){
-                            textView.setText("Horário: "+hourOfDay+":"+"0"+minute);
-                        }else{
-                            textView.setText("Horário: "+hourOfDay+":"+minute);
-                        }
+                        textView.setText("Horário: " +(hourOfDay < 10 ? "0" : "")+hourOfDay+
+                                ":"+(minute < 10 ? "0" : "")+minute);
                     }
                 }
             },hour,minuto,true);

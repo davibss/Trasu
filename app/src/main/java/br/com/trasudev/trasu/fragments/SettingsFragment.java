@@ -1,5 +1,6 @@
 package br.com.trasudev.trasu.fragments;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import br.com.trasudev.trasu.R;
 
@@ -73,8 +76,23 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_settings, container,false);
+        inicializarComponentes(rootView);
+        return rootView;
     }
+
+    private void inicializarComponentes(View rootView) {
+        Button button = rootView.findViewById(R.id.buttonCancel);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationManager nMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                nMgr.cancelAll();
+                Toast.makeText(getActivity(),"Notificações deletadas",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

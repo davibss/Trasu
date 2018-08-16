@@ -121,4 +121,7 @@
     <string name="menuPrioridade">Maior prioridade</string>
     <string name="menuFinalizada">Tarefas finalizadas</string>
     <!--endregion-->
+
+    <string name="buttonNotification">Cancelar todas notificações</string>
+
 </resources>
