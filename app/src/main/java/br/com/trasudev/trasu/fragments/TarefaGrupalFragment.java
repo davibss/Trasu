@@ -18,6 +18,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -151,6 +154,7 @@ public class TarefaGrupalFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -158,6 +162,39 @@ public class TarefaGrupalFragment extends Fragment {
         firebaseUser = Conexao.getFirebaseUser();
         verificarUser();
         initFirebase();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.notifications, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ordenarAZ:
+                // Not implemented here
+                eventoDatabaseCard(1);
+                return true;
+            case R.id.ordenarData:
+                // Do Fragment menu item stuff here
+                /*alert("DATA");*/
+                eventoDatabaseCard(2);
+                return true;
+            case R.id.ordenarPrioridade:
+                /*alert("PRIORIDADE");*/
+                eventoDatabaseCard(3);
+                return true;
+            case R.id.ordenarFinalizadas:
+                eventoDatabaseCard(4);
+                return true;
+            case  android.R.id.home:
+                getActivity().finish();
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
     @Override
@@ -221,7 +258,7 @@ public class TarefaGrupalFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLongClickable(true);
-        eventoDatabaseCard();
+        eventoDatabaseCard(2);
     }
 
     private void visualizarTarefa(View alertLayout, final TarefaGrupal tarefa){
@@ -353,29 +390,57 @@ public class TarefaGrupalFragment extends Fragment {
         });
     }
 
-    private void eventoDatabaseCard() {
+    private void eventoDatabaseCard(final int menu) {
         databaseReference.child("grupo").child(grupo.getGrp_id()).
-                child("tarefa_grupal").orderByChild("tar_dataFinal").
-                addValueEventListener(new ValueEventListener() {
+                child("tarefa_grupal").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         cartList.clear();
                         for (DataSnapshot obj: dataSnapshot.getChildren()){
                             TarefaGrupal p = obj.getValue(TarefaGrupal.class);
-                            if (p.getTar_status()==0) {
-                                cartList.add(p);
+                            if (menu == 4){
+                                if (p.getTar_status()==1){
+                                    cartList.add(p);
+                                }
+                            }else{
+                                if (p.getTar_status()==0) {
+                                    cartList.add(p);
+                                }
                             }
                         }
                         mAdapter.notifyDataSetChanged();
                         if (cartList.isEmpty()){
                             textView.setVisibility(View.VISIBLE);
-                        }else{
+                        }else if (menu == 2){
                             textView.setVisibility(View.INVISIBLE);
-                            Collections.sort(cartList, new Comparator<TarefaGrupal>() {
+                            Collections.sort(cartList, new Comparator<TarefaGrupal> () {
                                 @Override
                                 public int compare(TarefaGrupal o1, TarefaGrupal o2) {
                                     return converterData(o1.getTar_dataFinal()).
                                             compareTo(converterData(o2.getTar_dataFinal()));
+                                }
+                            });
+                        }else if (menu == 1){
+                            textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal> () {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    return o1.getTar_nome().compareTo(o2.getTar_nome());
+                                }
+                            });
+                        }else if (menu ==3){
+                            textView.setVisibility(View.INVISIBLE);
+                            Collections.sort(cartList, new Comparator<TarefaGrupal> () {
+                                @Override
+                                public int compare(TarefaGrupal o1, TarefaGrupal o2) {
+                                    if (o1.getTar_prioridade().equals("Alta") &&
+                                            o2.getTar_prioridade().equals("Média")){
+                                        return -1;
+                                    }else if (o1.getTar_prioridade().equals("Média") &&
+                                            o2.getTar_prioridade().equals("Baixa")){
+                                        return -1;
+                                    }
+                                    return 0;
                                 }
                             });
                         }
@@ -578,7 +643,7 @@ public class TarefaGrupalFragment extends Fragment {
         cartListRealizadores = new ArrayList<>();
         mAdapterRealizadores = new CartUserAdapter(getActivity(), cartListRealizadores){
             @Override
-            public void onBindViewHolder(MyViewHolder holder,final int position) {
+            public void onBindViewHolder(final MyViewHolder holder, final int position) {
                 super.onBindViewHolder(holder, position);
                 final Usuario item = cartListRealizadores.get(position);
                 holder.img_move.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
@@ -588,6 +653,16 @@ public class TarefaGrupalFragment extends Fragment {
                     for (Realiza realiza : tarefaGrupal.getRealiza().values()) {
                         if (realiza.getRea_user_id().equals(item.getUser_id())){
                             holder.checkBox.setChecked(true);
+                            holder.textView.setVisibility(View.VISIBLE);
+                            if (realiza.getRea_status() == 1){
+                                /*holder.name.setText(item.getUser_nome()+": Completo");*/
+                                holder.textView.setText("Completo");
+                                holder.textView.setBackgroundColor(Color.rgb(0,230,118));
+                            }else{
+                                /*holder.name.setText(item.getUser_nome()+": Ainda não fez");*/
+                                holder.textView.setText("Pendente");
+                                holder.textView.setBackgroundColor(Color.rgb(176,190,197));
+                            }
                         }
                     }
                 }
@@ -596,8 +671,12 @@ public class TarefaGrupalFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked){
                             new Realiza().cadastrar(databaseReference,grupo,tarefaGrupal,item);
+                            holder.textView.setVisibility(View.VISIBLE);
+                            holder.textView.setText("Pendente");
+                            holder.textView.setBackgroundColor(Color.rgb(176,190,197));
                         }else{
                             new Realiza().remover(databaseReference,grupo,tarefaGrupal,item);
+                            holder.textView.setVisibility(View.GONE);
                         }
                     }
                 });

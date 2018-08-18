@@ -18,7 +18,7 @@ import br.com.trasudev.trasu.entidades.Usuario;
 import br.com.trasudev.trasu.fragments.TarefaFragment;
 import br.com.trasudev.trasu.fragments.TarefaGrupalFragment;
 
-public class TarefaGrupalActivity extends AppCompatActivity implements
+public class  TarefaGrupalActivity extends AppCompatActivity implements
         TarefaGrupalFragment.OnFragmentInteractionListener{
 
     @Override
@@ -44,7 +44,7 @@ public class TarefaGrupalActivity extends AppCompatActivity implements
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case  android.R.id.home:
@@ -53,7 +53,7 @@ public class TarefaGrupalActivity extends AppCompatActivity implements
             default:break;
         }
         return  true;
-    }
+    }*/
 
 
     @Override

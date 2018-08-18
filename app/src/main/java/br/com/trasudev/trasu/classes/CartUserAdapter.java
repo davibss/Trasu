@@ -23,7 +23,7 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
     private CustomItemClickListener listener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView name, email;
+        public TextView name, email, textView;
         public ImageView img_move,img_integrante;
         public ProgressBar progressBar;
         public CheckBox checkBox;
@@ -38,6 +38,7 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
             img_integrante = view.findViewById(R.id.img_group);
             checkBox = view.findViewById(R.id.check_user);
             progressBar = view.findViewById(R.id.progressBar);
+            textView = view.findViewById(R.id.viewApoio);
             img_move.setOnClickListener(this);
             //viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
@@ -65,8 +66,8 @@ public class CartUserAdapter extends RecyclerView.Adapter<CartUserAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final Usuario item = cartList.get(position);
-        holder.name.setText(String.valueOf("Nome: " + item.getUser_nome()));
-        holder.email.setText(String.valueOf("Email: " +  item.getUser_email()));
+        holder.name.setText(String.valueOf("" + item.getUser_nome()));
+        holder.email.setText(String.valueOf("" +  item.getUser_email()));
     }
 
     @Override

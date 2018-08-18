@@ -15,8 +15,8 @@
         android:background="@android:color/white"
         android:layout_width="match_parent"
         android:elevation="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         android:layout_height="match_parent">
 
         <ImageView
@@ -50,8 +50,9 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/nome_list"
+            android:textSize="13sp"
             android:singleLine="true"
             android:ellipsize="end"
             android:textAlignment="viewStart"
@@ -66,11 +67,12 @@
             android:id="@+id/email_usuario"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/email_list"
+            android:textSize="13sp"
             android:singleLine="true"
             android:ellipsize="end"
             android:textAlignment="viewStart"
@@ -92,7 +94,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,6 +110,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/viewApoio"
+            android:layout_width="80dp"
+            android:layout_height="20dp"
+            android:rotation="-90"
+            android:layout_marginStart="10dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.15"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

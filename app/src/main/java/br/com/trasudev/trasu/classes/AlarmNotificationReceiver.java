@@ -21,10 +21,10 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(contexto))
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(titulo)
+                .setContentText(contexto)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
                 .setContentInfo(prioridade);
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
