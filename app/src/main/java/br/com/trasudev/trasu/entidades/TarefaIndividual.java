@@ -1,6 +1,7 @@
 package br.com.trasudev.trasu.entidades;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import br.com.trasudev.trasu.activitys.MainActivity;
 import br.com.trasudev.trasu.classes.AlarmNotificationReceiver;
 
 import static br.com.trasudev.trasu.activitys.MainActivity.txtPontos;
+import static br.com.trasudev.trasu.fragments.TarefaFragment.id_notify;
 
 public class TarefaIndividual {
     private String tar_id;
@@ -36,6 +38,7 @@ public class TarefaIndividual {
     private String tar_id_usuario;
     private int tar_status;
     private int tar_notificacao;
+    private int tar_idnotify;
 
     public TarefaIndividual(){
 
@@ -56,18 +59,34 @@ public class TarefaIndividual {
         this.setTar_id_usuario(idUsuario);
         this.setTar_status(0);
         this.setTar_notificacao(notificacao);
+        this.setTar_idnotify(notificacao == 0 ? 0 : id_notify);
         databaseReference.child("usuario").child(idUsuario).
                 child("tarefa_individual").child(this.getTar_id()).setValue(this);
     }
 
-    public void excluir(DatabaseReference databaseReference, TarefaIndividual tarefa, FirebaseUser firebaseUser){
+    public void excluir(DatabaseReference databaseReference, TarefaIndividual tarefa, FirebaseUser firebaseUser,
+                        Context context){
+        Intent myIntent = new Intent(context,AlarmNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                tarefa.getTar_idnotify(),myIntent,0);
+        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(pendingIntent);
+        notificationManager.cancel(tarefa.getTar_idnotify());
         databaseReference.child("usuario").child(firebaseUser.getUid()).
                 child("tarefa_individual").child(tarefa.getTar_id())
                 .removeValue();
     }
 
     public void finalizar(DatabaseReference databaseReference, TarefaIndividual tarefa,
-                          FirebaseUser firebaseUser, String pontos){
+                          FirebaseUser firebaseUser, String pontos, Context context){
+        Intent myIntent = new Intent(context,AlarmNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                tarefa.getTar_idnotify(),myIntent,0);
+        AlarmManager manager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(pendingIntent);
+        notificationManager.cancel(tarefa.getTar_idnotify());
         databaseReference.child("usuario").child(firebaseUser.getUid()).
                 child("tarefa_individual").child(tarefa.getTar_id()).
                 child("tar_status").setValue(1);
@@ -221,5 +240,13 @@ public class TarefaIndividual {
 
     public void setTar_notificacao(int tar_notificacao) {
         this.tar_notificacao = tar_notificacao;
+    }
+
+    public int getTar_idnotify() {
+        return tar_idnotify;
+    }
+
+    public void setTar_idnotify(int tar_idnotify) {
+        this.tar_idnotify = tar_idnotify;
     }
 }

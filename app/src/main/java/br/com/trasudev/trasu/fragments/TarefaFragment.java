@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import br.com.trasudev.trasu.R;
 import br.com.trasudev.trasu.activitys.MainActivity;
@@ -79,7 +80,7 @@ public class TarefaFragment extends Fragment implements
         RecyclerItemTouchHelper.RecyclerItemTouchHelperListener{
     private FirebaseUser firebaseUser;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    public static DatabaseReference databaseReference;
     private String checkValue;
     private AlertDialog dialog;
     private AlertDialog alerta;
@@ -96,6 +97,8 @@ public class TarefaFragment extends Fragment implements
     public static String titulo;
     public static String contexto;
     public static String prioridade;
+    public static int id_notify;
+    public static String id_user;
 
     private String mParam1;
     private String mParam2;
@@ -293,9 +296,10 @@ public class TarefaFragment extends Fragment implements
                         Integer.parseInt(editPrazo.getText().toString()) > 365){
                     alert("O prazo deve estar entre 0 e 365 dias");
                 } else{
+                    id_notify = new Random().nextInt();
                     if (checkBoxNotificacao.isChecked()){
                         notificar(Integer.parseInt(editPrazo.getText().toString()), "Nome: "+editNome.getText().toString(),
-                                editDescricao.getText().toString(),checkValue, textView.getText().toString());
+                                editDescricao.getText().toString(),checkValue, textView.getText().toString(), id_notify);
                     }
                     new TarefaIndividual().cadastrar(databaseReference,editNome.getText().toString(),
                             editDescricao.getText().toString(),checkValue,
@@ -308,10 +312,11 @@ public class TarefaFragment extends Fragment implements
         });
     }
 
-    private void notificar(int prazo, String tit, String desc, String prio, String horario) {
+    private void notificar(int prazo, String tit, String desc, String prio, String horario, int id) {
         titulo = tit;
         contexto = desc;
         prioridade = prio;
+        id_user = firebaseUser.getUid();
         String hora = horario.substring(9,11);
         String minuto = horario.substring(12,14);
         Calendar c = Calendar.getInstance();
@@ -322,7 +327,7 @@ public class TarefaFragment extends Fragment implements
         c.set(Calendar.SECOND,0);
         AlarmManager manager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = new Intent(getActivity(),AlarmNotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,myIntent,0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),id,myIntent,0);
         manager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
     }
 
@@ -624,7 +629,7 @@ public class TarefaFragment extends Fragment implements
                         .setPositiveButton("Receber", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 new TarefaIndividual().finalizar(databaseReference, deletedItem,
-                                        firebaseUser, mAdapter.subtrairDatas(deletedItem));
+                                        firebaseUser, mAdapter.subtrairDatas(deletedItem), getActivity());
                                 mAdapter.removeItem(position);
                             }
                         }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -686,7 +691,7 @@ public class TarefaFragment extends Fragment implements
                             .setCancelable(false)
                             .setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    new TarefaIndividual().excluir(databaseReference,tarefa,firebaseUser);
+                                    new TarefaIndividual().excluir(databaseReference,tarefa,firebaseUser, getActivity());
                                     mAdapter.removeItem(position);
                                 }
                             }).setNegativeButton("NÃO", new DialogInterface.OnClickListener() {

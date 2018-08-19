@@ -44,7 +44,12 @@
             android:label="@string/activity_title_about_us"
             android:screenOrientation="portrait" />
         <activity android:name=".activitys.RelatorioActivity"></activity>
-        <receiver android:name=".classes.AlarmNotificationReceiver"/>
+        <receiver android:name=".classes.AlarmNotificationReceiver">
+            <intent-filter>
+                <action android:name="FINALIZAR"/>
+                <action android:name="EXCLUIR"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
