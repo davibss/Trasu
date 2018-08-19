@@ -67,7 +67,7 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
                                         databaseReference.child("usuario").
                                                 child(id_user).
                                                 child("user_pontos").setValue(soma);
-                                        Toast.makeText(context, "Tarefa finalizada", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Tarefa finalizada", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
@@ -134,7 +134,7 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
                                     databaseReference.child("usuario").child(id_user).
                                             child("tarefa_individual").child(p.getTar_id())
                                             .removeValue();
-                                    Toast.makeText(context, "Tarefa excluída", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Tarefa excluída", Toast.LENGTH_LONG).show();
                                 }
                             }
 
