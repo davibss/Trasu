@@ -327,6 +327,13 @@ public class TarefaFragment extends Fragment implements
         c.set(Calendar.SECOND,0);
         AlarmManager manager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = new Intent(getActivity(),AlarmNotificationReceiver.class);
+        Bundle extras = new Bundle();
+        extras.putString("titulo",tit);
+        extras.putString("contexto",desc);
+        extras.putString("prioridade",prio);
+        extras.putString("id_user",firebaseUser.getUid());
+        extras.putInt("id_not",id);
+        myIntent.putExtras(extras);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),id,myIntent,0);
         manager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),pendingIntent);
     }
