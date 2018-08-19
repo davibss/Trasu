@@ -77,20 +77,7 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_settings, container,false);
-        inicializarComponentes(rootView);
         return rootView;
-    }
-
-    private void inicializarComponentes(View rootView) {
-        Button button = rootView.findViewById(R.id.buttonCancel);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NotificationManager nMgr = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                nMgr.cancelAll();
-                Toast.makeText(getActivity(),"Notificações deletadas",Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 

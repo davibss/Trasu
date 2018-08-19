@@ -32,13 +32,6 @@ import br.com.trasudev.trasu.entidades.TarefaIndividual;
 import br.com.trasudev.trasu.entidades.Usuario;
 
 import static br.com.trasudev.trasu.activitys.LoginActivity.calledAlready;
-import static br.com.trasudev.trasu.activitys.MainActivity.txtPontos;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.contexto;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.databaseReference;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.id_notify;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.id_user;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.titulo;
-import static br.com.trasudev.trasu.fragments.TarefaFragment.prioridade;
 
 public class AlarmNotificationReceiver extends BroadcastReceiver {
 
